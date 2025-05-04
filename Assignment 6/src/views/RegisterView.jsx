@@ -84,16 +84,16 @@ function RegisterView() {
                     </div>
                     <div>
                         <label
-                            htmlFor="re_enterPassword"
+                            htmlFor="confirm password"
                             className="block text-sm font-medium text-white">
-                            Re-enter Password
+                            Confirm Password
                         </label>
                         <input
                             type="password"
-                            id="passwordConfirm"
+                            id="confirmPassword"
                             value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
                             className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
-                            placeholder="Enter your password"
+                            placeholder="Re-enter your password"
                             required
                         />
                     </div>
