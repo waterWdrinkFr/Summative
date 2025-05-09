@@ -14,8 +14,8 @@ function App() {
             <Routes>
                 <Route path="/" element={<HomeView />} />
                 <Route path="/movies" element={<MoviesView />}>
-                    <Route index element={<Navigate to="28" replace />} />
-                    <Route path=":genre_id" element={<GenreView />} />
+                    <Route index element={<Navigate to="genres/28" replace />} />
+                    <Route path="genres/:genre_id" element={<GenreView />} />
                     <Route path="details/:id" element={<DetailView />} />
                 </Route>
                 <Route path="/login" element={<LoginView />} />

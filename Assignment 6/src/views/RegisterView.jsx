@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useStoreContext } from "../context";
+import Genres from "../components/Genres.jsx";
 
 function RegisterView() {
     const [name, setName] = useState("");
@@ -86,14 +88,14 @@ function RegisterView() {
                         <label
                             htmlFor="re_enterPassword"
                             className="block text-sm font-medium text-white">
-                            Re-enter Password
+                            Confirm Password
                         </label>
                         <input
                             type="password"
                             id="passwordConfirm"
                             value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
                             className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
-                            placeholder="Enter your password"
+                            placeholder="Re-enter your password"
                             required
                         />
                     </div>
