@@ -32,7 +32,10 @@ function Hero() {
                 {movies.map((movie) => (
                     <SwiperSlide key={movie.id}>
                         <div className="relative w-full h-full">
-                            <img src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`} alt={movie.title} className="w-full h-full object-cover" />
+                            <img
+                                src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+                                alt={movie.title}
+                                className="w-full h-full object-cover" />
                             <div className="absolute bottom-0 left-0 w-full h-[100px] p-4 bg-gradient-to-t from-black to-transparent text-white">
                                 <h2 className="mt-1 text-2xl font-bold">{movie.title}</h2>
                                 <button className="px-4 py-2 bg-sky-600 text-white font-bold rounded-lg cursor-pointer"> Watch Now </button>

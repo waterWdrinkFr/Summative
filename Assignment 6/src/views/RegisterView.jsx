@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useStoreContext } from "../context";
+import Genres from "../components/Genres.jsx";
 
 function RegisterView() {
     const [name, setName] = useState("");

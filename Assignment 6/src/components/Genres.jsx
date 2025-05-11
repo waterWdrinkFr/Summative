@@ -28,7 +28,7 @@ function Genres(props) {
 
     const GenreClick = (genreId) => {
         setSelectedGenre(genreId);
-        navigate(`/movies/${genreId}`);
+        navigate(`/movies/genres/${genreId}`);
         if (props.onGenreSelect) {
             props.onGenreSelect(genreId);
         }
