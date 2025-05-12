@@ -30,12 +30,11 @@ function GenreView() {
                 ))}
             </div>
             <button onClick={() => setPage(page - 1)} disabled={page === 1}
-                className="mt-4 ml-72.5 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer" >
+                className="mt-4 ml-87 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer" >
                 Previous
             </button>
-            <span className="text-lg font-bold">Page {page}</span>
             <button onClick={() => setPage(page + 1)}
-                className="mt-4 ml-15.5 px-8 py-2 bg-blue-600 text-white rounded-lg cursor-pointer" >
+                className="mt-4 ml-4 px-8 py-2 bg-blue-600 text-white rounded-lg cursor-pointer" >
                 Next
             </button>
         </div>

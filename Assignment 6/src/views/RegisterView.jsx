@@ -109,6 +109,7 @@ function RegisterView() {
                     <span onClick={() => navigate("/login")} className="text-blue-600 underline cursor-pointer" > Login here </span>
                 </p>
             </div>
+            <Genres />
         </div>
     );
 }

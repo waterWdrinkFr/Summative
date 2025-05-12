@@ -28,10 +28,10 @@ function Genres(props) {
 
     const GenreClick = (genreId) => {
         setSelectedGenre(genreId);
-        navigate(`/movies/genres/${genreId}`);
-        if (props.onGenreSelect) {
-            props.onGenreSelect(genreId);
-        }
+        // navigate(`/movies/genres/${genreId}`);
+        // if (props.onGenreSelect) {
+        //     props.onGenreSelect(genreId);
+        // }
     };
 
     return (
@@ -40,7 +40,7 @@ function Genres(props) {
                 {genres.map((genre) => (
                     <li key={genre.id} className="mb-3">
                         <button
-                            className={`px-4 py-2 text-xl font-bold cursor-pointer whitespace-nowrap ${
+                            className={`px-4 text-xl font-bold cursor-pointer whitespace-nowrap ${
                                 selectedGenre === genre.id ? "underline text-sky-600" : "text-white"
                             }`}
                             onClick={() => GenreClick(genre.id)}
