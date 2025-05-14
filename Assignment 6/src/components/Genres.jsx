@@ -1,57 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useStoreContext } from "../context";
 
-function Genres(props) {
-    const [genres, setGenres] = useState([]);
-    const [selectedGenre, setSelectedGenre] = useState(props.defaultGenre || 28);
+function SelectedGenresDisplay({ onGenreSelect }) {
+    const { genres: selectedGenres } = useStoreContext();
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchGenres = async () => {
-            try {
-                const response = await axios.get(
-                    `https://api.themoviedb.org/3/genre/movie/list?api_key=${import.meta.env.VITE_TMDB_KEY}`
-                );
-                setGenres(
-                    response.data.genres.filter((genre) =>
-                        [28, 12, 16, 80, 10751, 14, 36, 27, 9648, 878, 10752, 37].includes(genre.id)
-                    )
-                );
-            } catch (error) {
-                navigate("/*");
-            }
-        };
+        if (selectedGenres.size === 0) {
+            navigate("/register");
+        }
+    }, [selectedGenres, navigate]);
 
-        fetchGenres();
-    }, []);
+    const handleGenreClick = (genreId) => {
+        navigate(`/movies/genres/${genreId}`);
 
-    const GenreClick = (genreId) => {
-        setSelectedGenre(genreId);
-        // navigate(`/movies/genres/${genreId}`);
-        // if (props.onGenreSelect) {
-        //     props.onGenreSelect(genreId);
-        // }
+        if (onGenreSelect) {
+            onGenreSelect(genreId);
+        }
     };
 
     return (
         <div>
-            <ul className="list-none pl-0">
-                {genres.map((genre) => (
-                    <li key={genre.id} className="mb-3">
+            <div className="flex flex-wrap gap-2">
+                {selectedGenres.size > 0 ? (
+                    selectedGenres.entrySeq().map(([genreId, genreName]) => (
                         <button
-                            className={`px-4 text-xl font-bold cursor-pointer whitespace-nowrap ${
-                                selectedGenre === genre.id ? "underline text-sky-600" : "text-white"
-                            }`}
-                            onClick={() => GenreClick(genre.id)}
+                            key={genreId}
+                            onClick={() => handleGenreClick(genreId)}
+                            className="w-[200px] py-2 mb-2 bg-blue-600 text-white rounded-md hover:bg-blue-800"
                         >
-                            {genre.name}
+                            {genreName}
                         </button>
-                    </li>
-                ))}
-            </ul>
+                    ))
+                ) : (
+                    <p className="text-gray-400">No genres selected.</p>
+                )}
+            </div>
         </div>
     );
 }
 
-export default Genres;
+export default SelectedGenresDisplay;
