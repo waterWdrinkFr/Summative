@@ -8,11 +8,13 @@ export const StoreProvider = ({ children }) => {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [cart, setCart] = useState(Map());
-    const [genres, setGenres] = useState(Map());
+    const [availableGenres, setAvailableGenres] = useState([]);
+    const [selectedGenres, setSelectedGenres] = useState(new Map());
+    const [cart, setCart] = useState(new Map());
+
 
     return (
-        <StoreContext.Provider value={{ name, setName, lastName, setLastName, email, setEmail, password, setPassword, cart, setCart, genres, setGenres }}>
+        <StoreContext.Provider value={{ name, setName, lastName, setLastName, email, setEmail, password, setPassword, availableGenres, setAvailableGenres, selectedGenres, setSelectedGenres, cart, setCart }}>
             {children}
         </StoreContext.Provider>
     );
