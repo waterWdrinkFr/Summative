@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context";
 
-function Genres({ onGenreSelect }) {
+function SelectedGenresDisplay({ onGenreSelect }) {
     const { genres: selectedGenres } = useStoreContext();
     const navigate = useNavigate();
 
@@ -41,4 +41,4 @@ function Genres({ onGenreSelect }) {
     );
 }
 
-export default Genres;
+export default SelectedGenresDisplay;

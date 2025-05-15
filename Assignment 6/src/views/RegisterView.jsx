@@ -4,14 +4,10 @@ import { useStoreContext } from "../context";
 import axios from "axios";
 
 function RegisterView() {
-    const { setName, setLastName, setEmail, setPassword, availableGenres, setAvailableGenres, selectedGenres, setSelectedGenres } = useStoreContext(); 
-    const [localName, setLocalName] = useState("");
-    const [localLastName, setLocalLastName] = useState("");
-    const [localEmail, setLocalEmail] = useState("");
-    const [localPassword, setLocalPassword] = useState("");
+    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, genres: selectedGenres, setGenres: setSelectedGenres } = useStoreContext();
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [genres, setGenres] = useState([]);
     const navigate = useNavigate();
-
 
     useEffect(() => {
         const fetchGenres = async () => {
@@ -19,7 +15,7 @@ function RegisterView() {
                 const response = await axios.get(
                     `https://api.themoviedb.org/3/genre/movie/list?api_key=${import.meta.env.VITE_TMDB_KEY}`
                 );
-                setAvailableGenres(
+                setGenres(
                     response.data.genres.filter((genre) =>
                         [28, 12, 16, 80, 10751, 14, 36, 27, 9648, 878, 10752, 37].includes(genre.id)
                     )
@@ -33,13 +29,11 @@ function RegisterView() {
     }, []);
 
     const toggleSelectGenre = (genreId, genreName) => {
-        const updatedGenres = new Map(selectedGenres);
-        if (updatedGenres.has(genreId)) {
-            updatedGenres.delete(genreId);
+        if (selectedGenres.has(genreId)) {
+            setSelectedGenres(selectedGenres.delete(genreId));
         } else {
-            updatedGenres.set(genreId, genreName);
+            setSelectedGenres(selectedGenres.set(genreId, genreName));
         }
-        setSelectedGenres(updatedGenres);
     };
 
     const isGenreSelected = (genreId) => selectedGenres.has(genreId);
@@ -51,17 +45,14 @@ function RegisterView() {
             alert("Please select at least 5 genres before registering.");
             return;
         }
-        if (localPassword !== confirmPassword) {
+
+        if (password !== confirmPassword) {
             alert("Passwords do not match!");
             return;
         }
 
-        setName(localName);
-        setLastName(localLastName);
-        setEmail(localEmail);
-        setPassword(localPassword);
+        const firstGenreId = selectedGenres.keySeq().first();
 
-        const firstGenreId = selectedGenres.keys().next().value;
         if (firstGenreId) {
             navigate(`/movies/genres/${firstGenreId}`);
         } else {
@@ -82,7 +73,7 @@ function RegisterView() {
                         </label>
                         <input
                             type="text"
-                            id="name" value={localName} onChange={(e) => setLocalName(e.target.value)}
+                            id="name" value={name} onChange={(e) => setName(e.target.value)}
                             className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
                             placeholder="Enter your first name"
                             required
@@ -97,7 +88,7 @@ function RegisterView() {
                         <input
                             type="text"
                             id="last name"
-                            value={localLastName} onChange={(e) => setLocalLastName(e.target.value)}
+                            value={lastName} onChange={(e) => setLastName(e.target.value)}
                             className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
                             placeholder="Enter your last name"
                             required
@@ -112,7 +103,7 @@ function RegisterView() {
                         <input
                             type="email"
                             id="email"
-                            value={localEmail} onChange={(e) => setLocalEmail(e.target.value)}
+                            value={email} onChange={(e) => setEmail(e.target.value)}
                             className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
                             placeholder="Enter your email"
                             required
@@ -127,7 +118,7 @@ function RegisterView() {
                         <input
                             type="password"
                             id="password"
-                            value={localPassword} onChange={(e) => setLocalPassword(e.target.value)}
+                            value={password} onChange={(e) => setPassword(e.target.value)}
                             className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
                             placeholder="Enter your password"
                             required
@@ -151,7 +142,7 @@ function RegisterView() {
                     <div>
                         <h2 className="block text-base font-medium text-white mt-4 mb-4">Select Genres</h2>
                         <ul className="grid grid-cols-2 gap-4">
-                            {availableGenres.map((genre) => (
+                            {genres.map((genre) => (
                                 <li key={genre.id}>
                                     <label className="flex items-center">
                                         <input
