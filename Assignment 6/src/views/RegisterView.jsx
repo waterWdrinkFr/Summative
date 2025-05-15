@@ -4,7 +4,8 @@ import { useStoreContext } from "../context";
 import axios from "axios";
 
 function RegisterView() {
-    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, genres: selectedGenres, setGenres: setSelectedGenres } = useStoreContext();
+    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, selectedGenres, setSelectedGenres } = useStoreContext();
+
     const [confirmPassword, setConfirmPassword] = useState("");
     const [genres, setGenres] = useState([]);
     const navigate = useNavigate();
@@ -12,14 +13,13 @@ function RegisterView() {
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const response = await axios.get(
+                const { data } = await axios.get(
                     `https://api.themoviedb.org/3/genre/movie/list?api_key=${import.meta.env.VITE_TMDB_KEY}`
                 );
-                setGenres(
-                    response.data.genres.filter((genre) =>
-                        [28, 12, 16, 80, 10751, 14, 36, 27, 9648, 878, 10752, 37].includes(genre.id)
-                    )
+                const availableGenres = data.genres.filter((genre) =>
+                    [28, 12, 16, 80, 10751, 14, 36, 27, 9648, 878, 10752, 37].includes(genre.id)
                 );
+                setGenres(availableGenres);
             } catch (error) {
                 console.error("Error fetching genres:", error);
             }
@@ -28,15 +28,17 @@ function RegisterView() {
         fetchGenres();
     }, []);
 
-    const toggleSelectGenre = (genreId, genreName) => {
-        if (selectedGenres.has(genreId)) {
-            setSelectedGenres(selectedGenres.delete(genreId));
+    const toggleGenre = (id, name) => {
+        const updated = new Map(selectedGenres);
+        if (updated.has(id)) {
+            updated.delete(id);
         } else {
-            setSelectedGenres(selectedGenres.set(genreId, genreName));
+            updated.set(id, name);
         }
+        setSelectedGenres(updated);
     };
 
-    const isGenreSelected = (genreId) => selectedGenres.has(genreId);
+    const isGenreSelected = (id) => selectedGenres.has(id);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -51,8 +53,7 @@ function RegisterView() {
             return;
         }
 
-        const firstGenreId = selectedGenres.keySeq().first();
-
+        const firstGenreId = selectedGenres.keys().next().value;
         if (firstGenreId) {
             navigate(`/movies/genres/${firstGenreId}`);
         } else {
@@ -64,112 +65,60 @@ function RegisterView() {
         <div className="flex justify-center items-center h-screen bg-gradient-to-b from-black to-blue-600">
             <div className="bg-black px-12 py-4 rounded-lg shadow-lg w-[600px]">
                 <h1 className="text-2xl font-bold text-center text-blue-700 mb-6">Register</h1>
+
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {[
+                        { id: "name", label: "Name", value: name, setValue: setName, type: "text", placeholder: "Enter your first name" },
+                        { id: "lastName", label: "Last Name", value: lastName, setValue: setLastName, type: "text", placeholder: "Enter your last name" },
+                        { id: "email", label: "Email", value: email, setValue: setEmail, type: "email", placeholder: "Enter your email" },
+                        { id: "password", label: "Password", value: password, setValue: setPassword, type: "password", placeholder: "Enter your password" },
+                        { id: "confirmPassword", label: "Confirm Password", value: confirmPassword, setValue: setConfirmPassword, type: "password", placeholder: "Re-enter your password" }
+                    ].map(({ id, label, value, setValue, type, placeholder }) => (
+                        <div key={id}>
+                            <label htmlFor={id} className="block text-base font-medium text-white">{label}</label>
+                            <input
+                                id={id}
+                                type={type}
+                                value={value}
+                                onChange={(e) => setValue(e.target.value)}
+                                placeholder={placeholder}
+                                required
+                                className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
+                            />
+                        </div>
+                    ))}
+
                     <div>
-                        <label
-                            htmlFor="first name"
-                            className="block text-base font-medium text-white">
-                            Name
-                        </label>
-                        <input
-                            type="text"
-                            id="name" value={name} onChange={(e) => setName(e.target.value)}
-                            className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
-                            placeholder="Enter your first name"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label
-                            htmlFor="last name"
-                            className="block text-base font-medium text-white">
-                            Last Name
-                        </label>
-                        <input
-                            type="text"
-                            id="last name"
-                            value={lastName} onChange={(e) => setLastName(e.target.value)}
-                            className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
-                            placeholder="Enter your last name"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label
-                            htmlFor="email"
-                            className="block text-base font-medium text-white">
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email} onChange={(e) => setEmail(e.target.value)}
-                            className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
-                            placeholder="Enter your email"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label
-                            htmlFor="password"
-                            className="block text-base font-medium text-white">
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            value={password} onChange={(e) => setPassword(e.target.value)}
-                            className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
-                            placeholder="Enter your password"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label
-                            htmlFor="confirm password"
-                            className="block text-base font-medium text-white">
-                            Confirm Password
-                        </label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
-                            placeholder="Re-enter your password"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <h2 className="block text-base font-medium text-white mt-4 mb-4">Select Genres</h2>
+                        <h2 className="text-base font-medium text-white mt-4 mb-4">Select Genres</h2>
                         <ul className="grid grid-cols-2 gap-4">
-                            {genres.map((genre) => (
-                                <li key={genre.id}>
+                            {genres.map(({ id, name }) => (
+                                <li key={id}>
                                     <label className="flex items-center">
                                         <input
                                             type="checkbox"
-                                            checked={isGenreSelected(genre.id)}
-                                            onChange={() => toggleSelectGenre(genre.id, genre.name)}
+                                            checked={isGenreSelected(id)}
+                                            onChange={() => toggleGenre(id, name)}
                                             className="mr-2"
                                         />
-                                        <span
-                                            className={`text-xl font-bold cursor-pointer whitespace-nowrap ${isGenreSelected(genre.id) ? "text-sky-600" : "text-white"
-                                                }`}
-                                        >
-                                            {genre.name}
+                                        <span className={`text-xl font-bold cursor-pointer whitespace-nowrap ${isGenreSelected(id) ? "text-sky-600" : "text-white"}`}>
+                                            {name}
                                         </span>
                                     </label>
                                 </li>
                             ))}
                         </ul>
                     </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer">
+
+                    <button type="submit" className="w-full bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer">
                         Register
                     </button>
                 </form>
-                <p className="mt-3 text-base text-center text-gray-600"> Already have an account?{" "}
-                    <span onClick={() => navigate("/login")} className="text-blue-600 underline cursor-pointer"> Login here </span>
+
+                <p className="mt-3 text-base text-center text-gray-600">
+                    Already have an account?{" "}
+                    <span onClick={() => navigate("/login")} className="text-blue-600 underline cursor-pointer">
+                        Login here
+                    </span>
                 </p>
             </div>
         </div>

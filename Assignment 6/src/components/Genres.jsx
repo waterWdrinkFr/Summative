@@ -2,15 +2,15 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context";
 
-function SelectedGenresDisplay({ onGenreSelect }) {
-    const { genres: selectedGenres } = useStoreContext();
+function GenresList({ onGenreSelect }) {
+    const { selectedGenres: setSelectedGenres } = useStoreContext();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (selectedGenres.size === 0) {
+        if (setSelectedGenres.size === 0) {
             navigate("/register");
         }
-    }, [selectedGenres, navigate]);
+    }, [setSelectedGenres, navigate]);
 
     const handleGenreClick = (genreId) => {
         navigate(`/movies/genres/${genreId}`);
@@ -23,8 +23,8 @@ function SelectedGenresDisplay({ onGenreSelect }) {
     return (
         <div>
             <div className="flex flex-wrap gap-2">
-                {selectedGenres.size > 0 ? (
-                    selectedGenres.entrySeq().map(([genreId, genreName]) => (
+                {setSelectedGenres.size > 0 ? (
+                    setSelectedGenres.entrySeq().map(([genreId, genreName]) => (
                         <button
                             key={genreId}
                             onClick={() => handleGenreClick(genreId)}
@@ -41,4 +41,4 @@ function SelectedGenresDisplay({ onGenreSelect }) {
     );
 }
 
-export default SelectedGenresDisplay;
+export default GenresList;
