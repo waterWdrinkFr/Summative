@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useStoreContext } from "../context";
-import { Map } from "immutable";
 
 function DetailView() {
+    const [movie, setMovie] = useState(null);
+    const { cart, setCart } = useStoreContext();
     const { id } = useParams();
     const navigate = useNavigate();
-    const [movie, setMovie] = useState(null);
-    const { cart, setCart, loggedIn } = useStoreContext();
 
     useEffect(() => {
         async function fetchDetails() {
@@ -30,9 +29,8 @@ function DetailView() {
             title: movie.title,
             poster: movie.poster_path,
         });
-        
+
         setCart(updatedCart);
-        alert(`"${movie.title}" has been added to your cart!`);
     };
 
     if (!movie) {
@@ -56,21 +54,20 @@ function DetailView() {
             <p className="text-lg mb-2"><strong>Status:</strong> {movie.status.toLocaleString()}</p>
             <p className="text-lg mb-2"><strong>Release Date:</strong> {movie.release_date}</p>
             <p className="text-lg mb-2"><strong>Revenue:</strong> ${movie.revenue.toLocaleString()}</p>
-            
+
             <div className="mt-6 mb-4">
-                <button 
+                <button
                     onClick={handleAddToCart}
                     disabled={isInCart}
-                    className={`px-6 py-3 rounded-lg text-white font-bold ${
-                        isInCart 
-                            ? "bg-gray-500 cursor-not-allowed" 
+                    className={`px-6 py-3 rounded-lg text-white font-bold ${isInCart
+                            ? "bg-gray-500 cursor-not-allowed"
                             : "bg-blue-600 hover:bg-blue-800"
-                    }`}
+                        }`}
                 >
                     {isInCart ? "Added to Cart" : `Buy ${movie.title}`}
                 </button>
             </div>
-            
+
             {trailer ? (
                 <div className="mt-4 mb-18">
                     <h2 className="text-2xl font-bold mb-2">Trailer</h2>
