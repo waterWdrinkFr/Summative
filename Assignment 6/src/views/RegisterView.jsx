@@ -4,7 +4,7 @@ import { useStoreContext } from "../context";
 import axios from "axios";
 
 function RegisterView() {
-    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, selectedGenres, setSelectedGenres, setLoggedIn } = useStoreContext();
+    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, selectedGenres, setSelectedGenres } = useStoreContext();
 
     const [confirmPassword, setConfirmPassword] = useState("");
     const [genres, setGenres] = useState([]);
@@ -50,9 +50,8 @@ function RegisterView() {
             alert("Passwords do not match!");
             return;
         }
-
-        setLoggedIn(true);
-        navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
+        
+        navigate("/login");
     };
 
     return (

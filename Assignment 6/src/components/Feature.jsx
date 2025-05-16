@@ -29,10 +29,10 @@ function Feature() {
             <div className="flex flex-wrap justify-center gap-18">
                 {movies.map((movie) => (
                     <div key={movie.id} className="mt-[1%] w-[25%] h-[500px] bg-blue-800 text-white rounded-lg overflow-hidden shadow-lg">
-                        <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} className="w-full h-[92.5%] object-cover" />
+                        <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} className="w-full h-[85%] object-cover" />
                         <div className="flex items-center justify-center h-[7.5%]">
                             <span 
-                                className="hover:underline cursor-pointer text-white font-bold"
+                                className="px-10 mt-10 hover:underline cursor-pointer text-white text-base font-bold"
                                 onClick={() => navigate(`/movies/details/${movie.id}`)}
                             >
                                 {movie.title}

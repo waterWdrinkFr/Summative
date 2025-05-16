@@ -3,24 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context";
 
 function LoginView() {
-    const { setEmail, setPassword, setLoggedIn } = useStoreContext();
+    const { email, password, setLoggedIn , selectedGenres} = useStoreContext();
     const [inputEmail, setInputEmail] = useState("");
     const [inputPassword, setInputPassword] = useState("");
     const [error, setError] = useState("");
-
     const navigate = useNavigate();
-
-    const validEmail = "j@s";
-    const validPassword = "js";
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        if (inputEmail === validEmail && inputPassword === validPassword) {
-            setEmail(inputEmail);
-            setPassword(inputPassword);
+        if (inputEmail === email && inputPassword === password) {
             setLoggedIn(true);
-            navigate("/");
+            navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
         } else {
             setError("Invalid email or password.");
         }
@@ -30,7 +23,6 @@ function LoginView() {
         <div className="flex justify-center items-center h-screen bg-gradient-to-b from-black to-blue-600">
             <div className="bg-black p-8 rounded-lg shadow-lg w-[400px]">
                 <h1 className="text-2xl font-bold text-center text-blue-700 mb-6">Login</h1>
-
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-white">Email</label>

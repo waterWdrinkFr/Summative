@@ -64,7 +64,7 @@ function DetailView() {
                             : "bg-blue-600 hover:bg-blue-800"
                         }`}
                 >
-                    {isInCart ? "Added to Cart" : `Buy: ${movie.title}`}
+                    {isInCart ? "Added to Cart" : `Buy - $$$`}
                 </button>
             </div>
 
@@ -73,7 +73,7 @@ function DetailView() {
                     <h2 className="text-2xl font-bold mb-2">Trailer</h2>
                     <iframe
                         width="950"
-                        height="400"
+                        height="500"
                         src={`https://www.youtube.com/embed/${trailer.key}`} title="Movie Trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
                     </iframe>
                 </div>

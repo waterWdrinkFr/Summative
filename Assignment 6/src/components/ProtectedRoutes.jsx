@@ -3,10 +3,10 @@ import { Navigate } from "react-router-dom";
 import { useStoreContext } from "../context";
 
 function ProtectedRoutes({ children }) {
-    const { genres: selectedGenres } = useStoreContext();
+    const { isLoggedIn } = useStoreContext();
 
-    if (selectedGenres.size === 0) {
-        return <Navigate to="/register" replace />;
+    if (isLoggedIn === false) {
+        return <Navigate to="/login" replace />;
     }
 
     return children;
