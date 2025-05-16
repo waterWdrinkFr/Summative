@@ -4,7 +4,7 @@ import { useStoreContext } from "../context";
 import axios from "axios";
 
 function RegisterView() {
-    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, selectedGenres, setSelectedGenres } = useStoreContext();
+    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, selectedGenres, setSelectedGenres, setLoggedIn } = useStoreContext();
 
     const [confirmPassword, setConfirmPassword] = useState("");
     const [genres, setGenres] = useState([]);
@@ -28,14 +28,12 @@ function RegisterView() {
         fetchGenres();
     }, []);
 
-    const toggleGenre = (id, name) => {
-        const updated = new Map(selectedGenres);
-        if (updated.has(id)) {
-            updated.delete(id);
+    const toggleSelectedGenre = (id, name) => {
+        if (selectedGenres.has(id)) {
+            setSelectedGenres(selectedGenres.delete(id));
         } else {
-            updated.set(id, name);
+            setSelectedGenres(selectedGenres.set(id, name));
         }
-        setSelectedGenres(updated);
     };
 
     const isGenreSelected = (id) => selectedGenres.has(id);
@@ -53,12 +51,8 @@ function RegisterView() {
             return;
         }
 
-        const firstGenreId = selectedGenres.keys().next().value;
-        if (firstGenreId) {
-            navigate(`/movies/genres/${firstGenreId}`);
-        } else {
-            alert("No genres selected.");
-        }
+        setLoggedIn(true);
+        navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
     };
 
     return (
@@ -97,7 +91,7 @@ function RegisterView() {
                                         <input
                                             type="checkbox"
                                             checked={isGenreSelected(id)}
-                                            onChange={() => toggleGenre(id, name)}
+                                            onChange={() => toggleSelectedGenre(id, name)}
                                             className="mr-2"
                                         />
                                         <span className={`text-xl font-bold cursor-pointer whitespace-nowrap ${isGenreSelected(id) ? "text-sky-600" : "text-white"}`}>
@@ -114,7 +108,7 @@ function RegisterView() {
                     </button>
                 </form>
 
-                <p className="mt-3 text-base text-center text-gray-600">
+                <p className="mt-3 text-sm text-center text-gray-600">
                     Already have an account?{" "}
                     <span onClick={() => navigate("/login")} className="text-blue-600 underline cursor-pointer">
                         Login here

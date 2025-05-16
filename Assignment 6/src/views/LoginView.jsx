@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context";
 
 function LoginView() {
-    const [password, setPassword] = useState("");
+    const { email, setEmail, password, setPassword } = useStoreContext("");
     const navigate = useNavigate();
 
     return (
@@ -48,7 +48,7 @@ function LoginView() {
                     </button>
                 </form>
                 <p
-                    className="text-sm text-center text-gray-600 mt-4"> Don't have an account?
+                    className="text-sm text-center text-gray-600 mt-4"> Don't have an account?{" "}
                     <span onClick={() => navigate("/register")}
                         className="text-blue-600 underline cursor-pointer">
                         Register here

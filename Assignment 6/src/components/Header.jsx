@@ -1,21 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context";
+import { Map } from "immutable";
 
 function Header() {
     const navigate = useNavigate();
-    const { name, setName, setLastName, setEmail, setPassword, setSelectedGenres, loggedIn, setLoggedIn } = useStoreContext();
+    const { name, setName, setLastName, setEmail, setPassword, selectedGenres, setSelectedGenres, loggedIn, setLoggedIn } = useStoreContext();
 
     const handleLogout = () => {
-        navigate("/login");
-
         setName("");
         setLastName("");
         setEmail("");
         setPassword("");
-        setSelectedGenres(new Map());
+        setSelectedGenres(Map());
         setLoggedIn(false);
-    };
 
+        navigate("/login");
+    };
+    
     return (
         <div className="fixed top-0 left-0 w-full h-[120px] bg-gradient-to-b from-black to-transparent z-20">
             <div className="flex items-center h-full">
@@ -34,7 +35,7 @@ function Header() {
                         />
                         <span
                             className="mt-6 ml-5 h-[40px] w-[70px] text-xl font-bold text-sky-600 underline cursor-pointer whitespace-nowrap"
-                            onClick={() => navigate("/movies")}
+                            onClick={() => navigate(`/movies/genres/${selectedGenres.keys().next().value}`)}
                         >
                             Hi {name}, check out your favourite genres
                         </span>
