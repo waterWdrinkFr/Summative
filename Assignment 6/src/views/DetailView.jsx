@@ -64,7 +64,7 @@ function DetailView() {
                             : "bg-blue-600 hover:bg-blue-800"
                         }`}
                 >
-                    {isInCart ? "Added to Cart" : `Buy ${movie.title}`}
+                    {isInCart ? "Added to Cart" : `Buy: ${movie.title}`}
                 </button>
             </div>
 
