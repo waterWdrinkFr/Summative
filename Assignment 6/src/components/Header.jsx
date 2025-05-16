@@ -16,12 +16,19 @@ function Header() {
 
         navigate("/login");
     };
-    
+
     return (
         <div className="fixed top-0 left-0 w-full h-[120px] bg-gradient-to-b from-black to-transparent z-20">
+            {/* Welcome message that appears only when logged in */}
+            {loggedIn && (
+                <div className="text-center w-full bg-blue-900 bg-opacity-75">
+                    <p className="text-white font-medium">Hello {name}, welcome to JStreaming!</p>
+                </div>
+            )}
+            
             <div className="flex items-center h-full">
                 <button
-                    className="mt-0.5 ml-5 w-[200px] p-1 rounded-lg text-3xl font-bold text-white bg-blue-900 cursor-pointer"
+                    className="mb-5 ml-5 w-[200px] p-1 rounded-lg text-3xl font-bold text-white bg-blue-900 cursor-pointer"
                     onClick={() => navigate("/")}
                 >
                     JStreaming
@@ -30,23 +37,29 @@ function Header() {
                 {loggedIn ? (
                     <>
                         <input
-                            className="mt-0.5 ml-50 w-[30%] h-[30px] rounded-full border-none px-4 text-base outline-none bg-white text-black"
+                            className="mb-3 ml-[150px] w-[400px] h-[30px] rounded-full border-none px-4 text-base outline-none bg-white text-black"
                             placeholder="Search Title"
                         />
-                        <span
-                            className="mt-6 ml-5 h-[40px] w-[70px] text-xl font-bold text-sky-600 underline cursor-pointer whitespace-nowrap"
+                        <button
+                            className="mb-4.5 ml-[50px] h-[35px] w-[125px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
                             onClick={() => navigate(`/movies/genres/${selectedGenres.keys().next().value}`)}
                         >
-                            Hi {name}, check out your favourite genres
-                        </span>
+                            FAVOURITES
+                        </button>
                         <button
-                            className="mt-0.5 ml-5 h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
+                            className="mb-4.5 ml-[15px] h-[35px] w-[70px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
+                            onClick={() => navigate(`/cart`)}
+                        >
+                            CART
+                        </button>
+                        <button
+                            className="mb-4.5 ml-[15px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
                             onClick={() => navigate("/settings")}
                         >
                             SETTINGS
                         </button>
                         <button
-                            className="mt-0.5 ml-5 h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-red-700 cursor-pointer"
+                            className="mb-4.5 ml-[50px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-red-700 cursor-pointer"
                             onClick={handleLogout}
                         >
                             LOGOUT

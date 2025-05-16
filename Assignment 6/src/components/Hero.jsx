@@ -20,7 +20,7 @@ function Hero() {
     }, []);
 
     return (
-        <div className="relative top-[110px] w-full">
+        <div className="relative top-[140px] w-full">
             <div className="absolute z-10 w-full text-center top-[5%] px-4">
                 <div className="inline-block bg-blue-900/50 px-6 py-4 rounded-xl shadow-2xl">
                     <h1 className="text-[37.5px] text-white font-bold text-center drop-shadow-md"> Catch up on the Latest and Greatest Shows and Movies</h1>

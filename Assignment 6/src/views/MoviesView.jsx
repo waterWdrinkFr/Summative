@@ -8,7 +8,7 @@ function MoviesView() {
         <>
             <Header />
             <div className="flex">
-                <aside className="mt-[100px] w-1/5 p-4 text-white border-r-2 border-blue-700">
+                <aside className="mt-[120px] w-1/5 p-4 text-white border-r-2 border-blue-700">
                     <h1 className="text-3xl font-bold mb-8">Selected Genres</h1>
                     <Genres />
                 </aside>

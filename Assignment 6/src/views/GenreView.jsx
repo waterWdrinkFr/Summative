@@ -18,7 +18,7 @@ function GenreView() {
     }, [genre_id, page]);
 
     return (
-        <div className="mt-[100px]">
+        <div className="mt-[120px]">
             <div className="grid grid-cols-4 gap-4">
                 {movies.map((movie) => (
                     <div key={movie.id} className="bg-gray-800 text-white p-4 rounded-lg shadow-md">
