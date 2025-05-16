@@ -37,7 +37,7 @@ function Header() {
                 {loggedIn ? (
                     <>
                         <input
-                            className="mb-3 ml-[150px] w-[400px] h-[30px] rounded-full border-none px-4 text-base outline-none bg-white text-black"
+                            className="mb-3 ml-[140px] w-[400px] h-[30px] rounded-full border-none px-4 text-base outline-none bg-white text-black"
                             placeholder="Search Title"
                         />
                         <button
@@ -59,7 +59,7 @@ function Header() {
                             SETTINGS
                         </button>
                         <button
-                            className="mb-4.5 ml-[50px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-red-700 cursor-pointer"
+                            className="mb-4.5 ml-[20px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-red-700 cursor-pointer"
                             onClick={handleLogout}
                         >
                             LOGOUT

@@ -40,7 +40,7 @@ function Hero() {
                                 className="w-full h-full object-cover" />
                             <div className="absolute bottom-0 left-0 w-full h-[100px] p-4 bg-gradient-to-t from-black to-transparent text-white">
                                 <h2 className="mt-1 text-2xl font-bold">{movie.title}</h2>
-                                <button className="px-4 py-2 bg-sky-600 text-white font-bold rounded-lg cursor-pointer" onClick={() => navigate(`/movies/details/${movie.id}`)}>
+                                <button className="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-lg cursor-pointer" onClick={() => navigate(`/movies/details/${movie.id}`)}>
                                     More Details 
                                 </button>
                             </div>
