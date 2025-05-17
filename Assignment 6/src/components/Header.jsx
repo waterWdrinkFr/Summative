@@ -4,7 +4,7 @@ import { Map } from "immutable";
 
 function Header() {
     const navigate = useNavigate();
-    const { name, setName, setLastName, setEmail, setPassword, selectedGenres, setSelectedGenres, loggedIn, setLoggedIn } = useStoreContext();
+    const { name, setName, setLastName, setEmail, setPassword, selectedGenres, setSelectedGenres, setCart, loggedIn, setLoggedIn } = useStoreContext();
 
     const handleLogout = () => {
         setName("");
@@ -12,6 +12,7 @@ function Header() {
         setEmail("");
         setPassword("");
         setSelectedGenres(Map());
+        setCart([]);
         setLoggedIn(false);
 
         navigate("/login");
@@ -44,7 +45,7 @@ function Header() {
                             className="mb-4.5 ml-[50px] h-[35px] w-[125px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
                             onClick={() => navigate(`/movies/genres/${selectedGenres.keys().next().value}`)}
                         >
-                            FAVOURITES
+                            FAVORITES
                         </button>
                         <button
                             className="mb-4.5 ml-[15px] h-[35px] w-[70px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"

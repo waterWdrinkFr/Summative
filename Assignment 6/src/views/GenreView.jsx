@@ -24,7 +24,7 @@ function GenreView() {
                     <div key={movie.id} className="bg-gray-800 text-white p-4 rounded-lg shadow-md">
                         <Link to={`/movies/details/${movie.id}`}>
                             <img src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} className="w-full h-[80%] rounded-md mb-2" />
-                            <h3 className="text-[12px] font-bold">{movie.title}</h3>
+                            <button className="px-6 py-2 text-base font-bold rounded-lg bg-blue-700 hover:bg-blue-800 cursor-pointer">Buy-$$$</button>
                         </Link>
                     </div>
                 ))}

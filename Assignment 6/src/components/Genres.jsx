@@ -28,7 +28,7 @@ function GenresList({ onGenreSelect }) {
                         <button
                             key={genreId}
                             onClick={() => handleGenreClick(genreId)}
-                            className="w-[200px] py-2 mb-2 bg-blue-700 hover:bg-blue-800 text-white rounded-md "
+                            className="w-[200px] py-2 mb-2 bg-blue-700 hover:bg-blue-800 text-white rounded-md cursor-pointer"
                         >
                             {genreName}
                         </button>
