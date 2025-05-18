@@ -8,6 +8,8 @@ import DetailView from "./views/DetailView.jsx";
 import LoginView from "./views/LoginView.jsx";
 import RegisterView from "./views/RegisterView.jsx";
 import ErrorView from "./views/ErrorView.jsx";
+// import CartView from "./views/CartView.jsx";
+import SettingsView from "./views/SettingsView.jsx";
 
 function App() {
     return (
@@ -22,6 +24,8 @@ function App() {
                     </Route>
                     <Route path="/login" element={<LoginView />} />
                     <Route path="/register" element={<RegisterView />} />
+                    {/* <Route path="/cart" element={<CartView />} /> */}
+                    <Route path="/settings" element={<SettingsView />} />
                     <Route path="/*" element={<ErrorView />} />
                 </Routes>
             </Router>

@@ -3,8 +3,8 @@ import { useStoreContext } from "../context";
 import { Map } from "immutable";
 
 function Header() {
-    const navigate = useNavigate();
     const { name, setName, setLastName, setEmail, setPassword, selectedGenres, setSelectedGenres, setCart, loggedIn, setLoggedIn } = useStoreContext();
+    const navigate = useNavigate();
 
     const handleLogout = () => {
         setName("");
@@ -20,7 +20,6 @@ function Header() {
 
     return (
         <div className="fixed top-0 left-0 w-full h-[120px] bg-gradient-to-b from-black to-transparent z-20">
-            {/* Welcome message that appears only when logged in */}
             {loggedIn && (
                 <div className="text-center w-full bg-blue-900 bg-opacity-75">
                     <p className="text-white font-medium">Hello {name}, welcome to JStreaming!</p>
@@ -49,7 +48,7 @@ function Header() {
                         </button>
                         <button
                             className="mb-4.5 ml-[15px] h-[35px] w-[70px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
-                            onClick={() => navigate(`/cart`)}
+                            onClick={() => navigate("/cart")}
                         >
                             CART
                         </button>
