@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useStoreContext } from "../context";
 
+export function FirstGenreRedirect() {
+    const { genres: selectedGenres } = useStoreContext();
+    const firstGenreId = selectedGenres.keySeq().first();
+    return firstGenreId ? <Navigate to={`genres/${firstGenreId}`} replace /> : <Navigate to="/register" replace />;
+}
+
 function LoginView() {
-    const { email, password, setLoggedIn , selectedGenres} = useStoreContext();
+    const { email, password, setLoggedIn, selectedGenres } = useStoreContext();
     const [inputEmail, setInputEmail] = useState("");
     const [inputPassword, setInputPassword] = useState("");
     const [error, setError] = useState("");

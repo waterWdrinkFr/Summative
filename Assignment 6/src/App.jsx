@@ -22,7 +22,7 @@ function App() {
                     <Route path="/register" element={<RegisterView />} />
                     <Route element={<ProtectedRoutes />}>
                         <Route path="/movies" element={<MoviesView />}>
-                            <Route index element={<FirstGenreRedirect />} />
+                            <Route index element={<Navigate to={`/movies/genres/default`} replace />} />
                             <Route path="genres/:genre_id" element={<GenreView />} />
                             <Route path="details/:id" element={<DetailView />} />
                         </Route>
@@ -34,12 +34,6 @@ function App() {
             </Router>
         </StoreProvider>
     );
-}
-
-function FirstGenreRedirect() {
-    const { genres: selectedGenres } = useStoreContext();
-    const firstGenreId = selectedGenres.keySeq().first();
-    return firstGenreId ? <Navigate to={`genres/${firstGenreId}`} replace /> : <Navigate to="/register" replace />;
 }
 
 export default App;

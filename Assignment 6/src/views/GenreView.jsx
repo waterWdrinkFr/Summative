@@ -20,13 +20,18 @@ function GenreView() {
     }, [genre_id, page]);
 
     const handleAddToCart = (movie) => {
-        const updatedCart = new Map(cart);
+        const updatedCart = new Map(cart || new Map());
         updatedCart.set(movie.id.toString(), {
             id: movie.id,
             title: movie.title,
             poster: movie.poster_path,
         });
         setCart(updatedCart);
+    };
+
+    // Check if movie is in cart safely
+    const isInCart = (movieId) => {
+        return cart instanceof Map && cart.has(movieId.toString());
     };
 
     return (
@@ -42,13 +47,14 @@ function GenreView() {
                         </Link>
                         <button
                             onClick={() => handleAddToCart(movie)}
-                            disabled={cart?.has(movie.id.toString())}
-                            className={`w-full mt-2 px-6 py-2 text-base font-bold rounded-lg ${cart?.has(movie.id.toString())
+                            disabled={isInCart(movie.id)}
+                            className={`w-full mt-2 px-6 py-2 text-base font-bold rounded-lg ${
+                                isInCart(movie.id)
                                 ? "bg-gray-500 cursor-not-allowed"
                                 : "bg-blue-700 hover:bg-blue-800 cursor-pointer"
-                                }`}
+                            }`}
                         >
-                            {cart?.has(movie.id.toString()) ? "Added to Cart" : "Buy - $$$"}
+                            {isInCart(movie.id) ? "Added to Cart" : "Buy - $$$"}
                         </button>
                     </div>
                 ))}
