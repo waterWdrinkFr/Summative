@@ -6,6 +6,26 @@ function Header() {
     const { name, setName, setLastName, setEmail, setPassword, selectedGenres, setSelectedGenres, setCart, loggedIn, setLoggedIn } = useStoreContext();
     const navigate = useNavigate();
 
+    function debounce(func, delay) {
+        let timer;
+
+        return function (...args) {
+            clearTimeout(timer);
+            setMessage("");
+            timer = setTimeout(() => {
+                func(...args);
+            }, delay)
+        }
+    }
+
+    const handleSearch = debounce(() => {
+        e.preventDefault();
+        const query = e.target.elements.search.value;
+        if (query) {
+            navigate(`/movies/search/${query}`);
+        }
+    });
+
     const handleLogout = () => {
         setName("");
         setLastName("");
@@ -25,7 +45,7 @@ function Header() {
                     <p className="text-white font-medium">Hello {name}, welcome to JStreaming!</p>
                 </div>
             )}
-            
+
             <div className="flex items-center h-full">
                 <button
                     className="mb-5 ml-5 w-[200px] p-1 rounded-lg text-3xl font-bold text-white bg-blue-900 cursor-pointer"
@@ -37,29 +57,34 @@ function Header() {
                 {loggedIn ? (
                     <>
                         <input
-                            className="mb-3 ml-[140px] w-[400px] h-[30px] rounded-full border-none px-4 text-base outline-none bg-white text-black"
+                            className="mb-2.5 ml-[140px] w-[400px] h-[30px] rounded-full border-none px-4 text-base outline-none bg-white text-black"
                             placeholder="Search Title"
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    handleSearch(e);
+                                }
+                            }}
                         />
                         <button
-                            className="mb-4.5 ml-[50px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
+                            className="mb-3 ml-[50px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
                             onClick={() => navigate(`/movies/genres/${selectedGenres.keys().next().value}`)}
                         >
                             GENRES
                         </button>
                         <button
-                            className="mb-4.5 ml-[15px] h-[35px] w-[70px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
+                            className="mb-3 ml-[15px] h-[35px] w-[70px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
                             onClick={() => navigate("/cart")}
                         >
                             CART
                         </button>
                         <button
-                            className="mb-4.5 ml-[15px] h-[35px] w-[105px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
+                            className="mb-3 ml-[15px] h-[35px] w-[105px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
                             onClick={() => navigate("/settings")}
                         >
                             SETTINGS
                         </button>
                         <button
-                            className="mb-4.5 ml-[20px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-red-700 cursor-pointer"
+                            className="mb-3 ml-[20px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-red-700 cursor-pointer"
                             onClick={handleLogout}
                         >
                             LOGOUT
