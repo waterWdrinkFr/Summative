@@ -50,8 +50,6 @@ function SettingsView() {
         <div className="flex justify-center items-center h-screen bg-gradient-to-b from-black to-blue-600">
             <div className="bg-black px-12 py-6 rounded-lg shadow-lg w-[600px]">
                 <h1 className="text-2xl font-bold text-center text-blue-700 mb-6">Settings</h1>
-
-                {/* Fixed: Now just directly using handleSave as the onSubmit handler */}
                 <form onSubmit={handleSave} className="space-y-4">
                     {[
                         { id: "email", label: "Email", value: email, type: "email", placeholder: "Email", disabled: true, pointerEvents: 'none' },

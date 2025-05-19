@@ -4,7 +4,7 @@ import axios from "axios";
 import { useStoreContext } from "../context";
 
 function DetailView() {
-    const [movie, setMovie] = useState(null);
+    const [movies, setMovies] = useState(null);
     const { cart, setCart } = useStoreContext();
     const { id } = useParams();
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ function DetailView() {
                 const response = await axios.get(
                     `https://api.themoviedb.org/3/movie/${id}?api_key=${import.meta.env.VITE_TMDB_KEY}&append_to_response=videos&include_adult=false`
                 );
-                setMovie(response.data);
+                setMovies(response.data);
             } catch (error) {
                 navigate("/*");
             }
@@ -23,48 +23,47 @@ function DetailView() {
         fetchDetails();
     }, [id]);
 
-    const handleAddToCart = () => {
-        const updatedCart = cart.set(movie.id.toString(), {
+    const handleAddToCart = (movie) => {
+        const updatedCart = new Map(cart);
+        updatedCart.set(movie.id.toString(), {
             id: movie.id,
             title: movie.title,
             poster: movie.poster_path,
         });
-
         setCart(updatedCart);
     };
 
-    if (!movie) {
+    if (!movies) {
         return <div className="text-center mt-4">Loading...</div>;
     }
 
-    const trailer = movie.videos.results.find((video) => video.type === "Trailer" && video.site === "YouTube");
-    const isInCart = cart.has(movie.id.toString());
+    const trailer = movies.videos.results.find((video) => video.type === "Trailer" && video.site === "YouTube");
 
     return (
         <div className="mt-[100px] p-4 text-white">
-            <h1 className="text-4xl font-bold mb-4">{movie.title}</h1>
+            <h1 className="text-4xl font-bold mb-4">{movies.title}</h1>
             <img
-                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                src={`https://image.tmdb.org/t/p/w200${movies.poster_path}`}
                 className="w-[250px] h-full rounded-md mb-2"
             />
-            <p className="text-lg mb-2"><strong>Rating:</strong> {movie.vote_average.toFixed(1)}/10</p>
-            <p className="text-lg mb-2"><strong>Overview:</strong> {movie.overview}</p>
-            <p className="text-lg mb-2"><strong>Runtime:</strong> {movie.runtime} minutes</p>
-            <p className="text-lg mb-2"><strong>Original Language:</strong> {movie.original_language.toUpperCase()}</p>
-            <p className="text-lg mb-2"><strong>Status:</strong> {movie.status.toLocaleString()}</p>
-            <p className="text-lg mb-2"><strong>Release Date:</strong> {movie.release_date}</p>
-            <p className="text-lg mb-2"><strong>Revenue:</strong> ${movie.revenue.toLocaleString()}</p>
+            <p className="text-lg mb-2"><strong>Rating:</strong> {movies.vote_average.toFixed(1)}/10</p>
+            <p className="text-lg mb-2"><strong>Overview:</strong> {movies.overview}</p>
+            <p className="text-lg mb-2"><strong>Runtime:</strong> {movies.runtime} minutes</p>
+            <p className="text-lg mb-2"><strong>Original Language:</strong> {movies.original_language.toUpperCase()}</p>
+            <p className="text-lg mb-2"><strong>Status:</strong> {movies.status.toLocaleString()}</p>
+            <p className="text-lg mb-2"><strong>Release Date:</strong> {movies.release_date}</p>
+            <p className="text-lg mb-2"><strong>Revenue:</strong> ${movies.revenue.toLocaleString()}</p>
 
             <div className="mt-6 mb-4">
                 <button
-                    onClick={handleAddToCart}
-                    disabled={isInCart}
-                    className={`px-6 py-3 rounded-lg text-white font-bold ${isInCart
-                            ? "bg-gray-500 cursor-not-allowed"
-                            : "bg-blue-600 hover:bg-blue-800"
+                    onClick={() => handleAddToCart(movies)}
+                    disabled={cart?.has(movies.id.toString())}
+                    className={`w-[175px] mt-2 px-6 py-2 text-base font-bold rounded-lg ${cart?.has?.(movies.id.toString())
+                        ? "bg-gray-500 cursor-not-allowed"
+                        : "bg-blue-700 hover:bg-blue-800 cursor-pointer"
                         }`}
                 >
-                    {isInCart ? "Added to Cart" : `Buy - $$$`}
+                    {cart?.has(movies.id.toString()) ? "Added to Cart" : "Buy - $$$"}
                 </button>
             </div>
 

@@ -8,7 +8,7 @@ export const StoreProvider = ({ children }) => {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [cart, setCart] = useState(Map());
+    const [cart, setCart] = useState(new Map());
     const [selectedGenres, setSelectedGenres] = useState(Map());
     const [loggedIn, setLoggedIn] = useState(false);
 

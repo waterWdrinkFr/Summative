@@ -8,8 +8,9 @@ import DetailView from "./views/DetailView.jsx";
 import LoginView from "./views/LoginView.jsx";
 import RegisterView from "./views/RegisterView.jsx";
 import ErrorView from "./views/ErrorView.jsx";
-// import CartView from "./views/CartView.jsx";
+import CartView from "./views/CartView.jsx";
 import SettingsView from "./views/SettingsView.jsx";
+import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 
 function App() {
     return (
@@ -17,15 +18,17 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<HomeView />} />
-                    <Route path="/movies" element={<MoviesView />}>
-                        <Route index element={<FirstGenreRedirect />} />
-                        <Route path="genres/:genre_id" element={<GenreView />} />
-                        <Route path="details/:id" element={<DetailView />} />
-                    </Route>
                     <Route path="/login" element={<LoginView />} />
                     <Route path="/register" element={<RegisterView />} />
-                    {/* <Route path="/cart" element={<CartView />} /> */}
-                    <Route path="/settings" element={<SettingsView />} />
+                    <Route element={<ProtectedRoutes />}>
+                        <Route path="/movies" element={<MoviesView />}>
+                            <Route index element={<FirstGenreRedirect />} />
+                            <Route path="genres/:genre_id" element={<GenreView />} />
+                            <Route path="details/:id" element={<DetailView />} />
+                        </Route>
+                        <Route path="/cart" element={<CartView />} />
+                        <Route path="/settings" element={<SettingsView />} />
+                    </Route>
                     <Route path="/*" element={<ErrorView />} />
                 </Routes>
             </Router>

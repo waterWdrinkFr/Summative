@@ -42,7 +42,7 @@ function RegisterView() {
         e.preventDefault();
 
         if (selectedGenres.size < 5) {
-            alert("Please select at least 5 genres before registering.");
+            alert("Please select at least 5 genres.");
             return;
         }
 

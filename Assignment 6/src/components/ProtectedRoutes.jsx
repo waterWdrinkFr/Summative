@@ -1,15 +1,12 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import { useStoreContext } from "../context";
+import { Outlet, Navigate } from "react-router-dom";
+import { useStoreContext } from "../context/index.jsx";
 
-function ProtectedRoutes({ children }) {
-    const { isLoggedIn } = useStoreContext();
+function ProtectedRoutes() {
+    const { setLoggedIn } = useStoreContext();
 
-    if (isLoggedIn === false) {
-        return <Navigate to="/login" replace />;
-    }
-
-    return children;
+    return (
+        setLoggedIn ? <Outlet /> : <Navigate to="/login" />
+    )
 }
 
 export default ProtectedRoutes;

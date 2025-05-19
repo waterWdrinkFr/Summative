@@ -41,10 +41,10 @@ function Header() {
                             placeholder="Search Title"
                         />
                         <button
-                            className="mb-4.5 ml-[50px] h-[35px] w-[125px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
+                            className="mb-4.5 ml-[50px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
                             onClick={() => navigate(`/movies/genres/${selectedGenres.keys().next().value}`)}
                         >
-                            FAVORITES
+                            GENRES
                         </button>
                         <button
                             className="mb-4.5 ml-[15px] h-[35px] w-[70px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
@@ -53,7 +53,7 @@ function Header() {
                             CART
                         </button>
                         <button
-                            className="mb-4.5 ml-[15px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
+                            className="mb-4.5 ml-[15px] h-[35px] w-[105px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
                             onClick={() => navigate("/settings")}
                         >
                             SETTINGS
