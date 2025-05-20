@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useStoreContext } from "../context";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 function SearchView() {
 	const { query } = useParams();
@@ -56,56 +58,63 @@ function SearchView() {
 	};
 
 	return (
-		<div className="mt-[120px]">
-			<h2 className="text-2xl font-bold text-white ml-6 mb-4">Results for "{query}"</h2>
-			<div className="ml-[70px] grid grid-cols-4 gap-4">
-				{results.map((movie) => (
-					<div key={movie.id} className="bg-gray-800 text-white p-4 rounded-lg shadow-md">
-						<Link to={`/movies/details/${movie.id}`}>
-							{movie.poster_path ? (
-								<img
-									src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-									alt={movie.title}
-									className="w-full h-[80%] rounded-md mb-2 object-cover"
-								/>
-							) : (
-								<div className="w-full h-[80%] rounded-md mb-2 bg-gray-700 flex items-center justify-center text-gray-300 text-sm italic">
-									Poster Unavailable
-								</div>
-							)}
-						</Link>
-						<p className="text-sm font-semibold">{movie.title}</p>
-						<button
-							onClick={() => handleAddToCart(movie)}
-							disabled={isInCart(movie.id)}
-							className={`w-full mt-2 px-6 py-2 text-base font-bold rounded-lg ${isInCart(movie.id)
-									? "bg-gray-500 cursor-not-allowed"
-									: "bg-blue-700 hover:bg-blue-800 cursor-pointer"
-								}`}
-						>
-							{isInCart(movie.id) ? "Added to Cart" : "Buy - $$$"}
-						</button>
+		<>
+			<Header />
+			<div className="mt-[120px] min-h-screen">
+				<h2 className="text-2xl font-bold text-white ml-5 mb-4">Results for "{query}"</h2>
+				{!loading && results.length > 0 ? (
+					<div className="w-[98%] ml-5 grid grid-cols-5 gap-4">
+						{results.map((movie) => (
+							<div key={movie.id} className="bg-gray-800 text-white p-4 rounded-lg shadow-md">
+								<Link to={`/movies/details/${movie.id}`}>
+									{movie.poster_path ? (
+										<img
+											src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+											alt={movie.title}
+											className="w-full h-[80%] rounded-md mb-2 object-cover"
+										/>
+									) : (
+										<div className="w-full h-[80%] rounded-md mb-2 bg-gray-700 flex items-center justify-center text-gray-300 text-sm italic">
+											Poster Unavailable
+										</div>
+									)}
+								</Link>
+								<button
+									onClick={() => handleAddToCart(movie)}
+									disabled={isInCart(movie.id)}
+									className={`w-full mt-2 px-6 py-2 text-base font-bold rounded-lg ${isInCart(movie.id)
+										? "bg-gray-500 cursor-not-allowed"
+										: "bg-blue-700 hover:bg-blue-800 cursor-pointer"
+										}`}
+								>
+									{isInCart(movie.id) ? "Added to Cart" : "Buy - $$$"}
+								</button>
+							</div>
+						))}
 					</div>
-				))}
-			</div>
-			<button
-				onClick={() => handlePageChange(-1)}
-				disabled={page === 1 || loading}
-				className="mt-4 ml-95.5 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
-			>
-				Previous
-			</button>
+				) : !loading && (
+					<p className="text-white text-center text-lg mt-10">No movies found for "{query}".</p>
+				)}
+				<button
+					onClick={() => handlePageChange(-1)}
+					disabled={page === 1 || loading}
+					className="mt-4 ml-95.5 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+				>
+					Previous
+				</button>
 
-			<button
-				onClick={() => handlePageChange(1)}
-				disabled={page === totalPages.current || loading}
-				className="mt-2 ml-4 px-8 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
-			>
-				Next
-			</button>
-			{loading && <span className="ml-64 text-white">Loading...</span>}
-			<span className="ml-64 text-white">Page {page} of {totalPages.current}</span>
-		</div>
+				<button
+					onClick={() => handlePageChange(1)}
+					disabled={page === totalPages.current || loading}
+					className="mt-2 ml-4 px-8 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+				>
+					Next
+				</button>
+				{loading && <span className="ml-64 text-white">Loading...</span>}
+				<span className="ml-64 text-white">Page {page} of {totalPages.current}</span>
+			</div>
+			<Footer />
+		</>
 	);
 }
 

@@ -26,8 +26,8 @@ function App() {
                             <Route index element={<Navigate to={`/movies/genres/default`} replace />} />
                             <Route path="genres/:genre_id" element={<GenreView />} />
                             <Route path="details/:id" element={<DetailView />} />
-                            <Route path="search/:query" element={<SearchView />} />
                         </Route>
+                        <Route path="movies/search/:query" element={<SearchView />} />
                         <Route path="/cart" element={<CartView />} />
                         <Route path="/settings" element={<SettingsView />} />
                     </Route>
