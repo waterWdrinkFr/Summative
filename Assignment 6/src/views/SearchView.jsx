@@ -1,34 +1,45 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useStoreContext } from "../context";
 
 function SearchView() {
 	const { query } = useParams();
 	const [results, setResults] = useState([]);
+	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
+	const totalPages = useRef(1);
 	const { cart, setCart } = useStoreContext();
 
 	useEffect(() => {
 		if (query) {
+			setLoading(true);
 			fetch(
-				`https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_TMDB_KEY}&query=${encodeURIComponent(
-					query
-				)}&page=${page}&include_adult=false`
+				`https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_TMDB_KEY}&query=${encodeURIComponent(query)}&page=${page}&include_adult=false`
 			)
 				.then((res) => res.json())
 				.then((data) => {
 					if (data.results) {
 						setResults(data.results);
+						totalPages.current = data.total_pages || 1;
 					} else {
 						setResults([]);
 					}
+					setLoading(false);
 				})
 				.catch((err) => {
 					console.error("Fetch failed:", err);
 					setResults([]);
+					setLoading(false);
 				});
 		}
 	}, [query, page]);
+
+	const handlePageChange = (direction) => {
+		const nextPage = page + direction;
+		if (nextPage > 0 && nextPage <= totalPages.current) {
+			setPage(nextPage);
+		}
+	};
 
 	const handleAddToCart = (movie) => {
 		const updatedCart = new Map(cart || new Map());
@@ -68,8 +79,8 @@ function SearchView() {
 							onClick={() => handleAddToCart(movie)}
 							disabled={isInCart(movie.id)}
 							className={`w-full mt-2 px-6 py-2 text-base font-bold rounded-lg ${isInCart(movie.id)
-								? "bg-gray-500 cursor-not-allowed"
-								: "bg-blue-700 hover:bg-blue-800 cursor-pointer"
+									? "bg-gray-500 cursor-not-allowed"
+									: "bg-blue-700 hover:bg-blue-800 cursor-pointer"
 								}`}
 						>
 							{isInCart(movie.id) ? "Added to Cart" : "Buy - $$$"}
@@ -77,15 +88,23 @@ function SearchView() {
 					</div>
 				))}
 			</div>
-			<button onClick={() => setPage(page - 1)} disabled={page === 1}
-				className="mt-4 ml-95.5 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer" >
+			<button
+				onClick={() => handlePageChange(-1)}
+				disabled={page === 1 || loading}
+				className="mt-4 ml-95.5 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+			>
 				Previous
 			</button>
-			<button onClick={() => setPage(page + 1)}
-				className="mt-2 ml-4 px-8 py-2 bg-blue-600 text-white rounded-lg cursor-pointer" >
+
+			<button
+				onClick={() => handlePageChange(1)}
+				disabled={page === totalPages.current || loading}
+				className="mt-2 ml-4 px-8 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+			>
 				Next
 			</button>
-			<span className="ml-64 text-white">Page {page}</span>
+			{loading && <span className="ml-64 text-white">Loading...</span>}
+			<span className="ml-64 text-white">Page {page} of {totalPages.current}</span>
 		</div>
 	);
 }
