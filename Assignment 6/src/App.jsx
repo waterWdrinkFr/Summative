@@ -10,6 +10,7 @@ import RegisterView from "./views/RegisterView.jsx";
 import ErrorView from "./views/ErrorView.jsx";
 import CartView from "./views/CartView.jsx";
 import SettingsView from "./views/SettingsView.jsx";
+import SearchView from "./views/SearchView.jsx";
 import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
                             <Route index element={<Navigate to={`/movies/genres/default`} replace />} />
                             <Route path="genres/:genre_id" element={<GenreView />} />
                             <Route path="details/:id" element={<DetailView />} />
+                            <Route path="search/:query" element={<SearchView />} />
                         </Route>
                         <Route path="/cart" element={<CartView />} />
                         <Route path="/settings" element={<SettingsView />} />

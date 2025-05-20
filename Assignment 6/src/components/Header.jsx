@@ -1,30 +1,45 @@
 import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context";
 import { Map } from "immutable";
+import { useState, useCallback, useRef } from "react";
 
 function Header() {
     const { name, setName, setLastName, setEmail, setPassword, selectedGenres, setSelectedGenres, setCart, loggedIn, setLoggedIn } = useStoreContext();
     const navigate = useNavigate();
+    const [query, setQuery] = useState("");
+    const debounceTimer = useRef(null);
+    const [results, setResults] = useState([]);
 
-    function debounce(func, delay) {
-        let timer;
+    const handleSearchChange = useCallback((e) => {
+        const value = e.target.value;
+        setQuery(value);
 
-        return function (...args) {
-            clearTimeout(timer);
-            setMessage("");
-            timer = setTimeout(() => {
-                func(...args);
-            }, delay)
-        }
-    }
+        clearTimeout(debounceTimer.current);
 
-    const handleSearch = debounce(() => {
-        e.preventDefault();
-        const query = e.target.elements.search.value;
-        if (query) {
-            navigate(`/movies/search/${query}`);
-        }
-    });
+        debounceTimer.current = setTimeout(() => {
+            if (value.trim()) {
+                fetch(`https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_TMDB_KEY}&query=${encodeURIComponent(value)}`)
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data.results) {
+                            setResults(data.results.slice(0, 5));
+                        }
+                    })
+                    .catch((err) => {
+                        console.error("Search failed:", err);
+                        setResults([]);
+                    });
+            } else {
+                setResults([]);
+            }
+        }, 500);
+    }, []);
+
+    const handleSelectMovie = (movieId) => {
+        setQuery("");
+        setResults([]);
+        navigate(`/movies/details/${movieId}`);
+    };
 
     const handleLogout = () => {
         setName("");
@@ -34,7 +49,6 @@ function Header() {
         setSelectedGenres(Map());
         setCart([]);
         setLoggedIn(false);
-
         navigate("/login");
     };
 
@@ -56,15 +70,35 @@ function Header() {
 
                 {loggedIn ? (
                     <>
-                        <input
-                            className="mb-2.5 ml-[140px] w-[400px] h-[30px] rounded-full border-none px-4 text-base outline-none bg-white text-black"
-                            placeholder="Search Title"
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    handleSearch(e);
-                                }
-                            }}
-                        />
+                        <div className="relative mb-2.5 ml-[140px]">
+                            <input
+                                className="w-[400px] h-[30px] rounded-full border-none px-4 text-base outline-none bg-white text-black"
+                                placeholder="Search Title"
+                                value={query}
+                                onChange={handleSearchChange}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && query.trim()) {
+                                        navigate(`/movies/search/${encodeURIComponent(query.trim())}`);
+                                        setResults([]);
+                                    }
+
+                                }}
+                            />
+
+                            {results.length > 0 && (
+                                <ul className="absolute top-[35px] w-full bg-white rounded-lg shadow-lg z-50">
+                                    {results.map((movie) => (
+                                        <li
+                                            key={movie.id}
+                                            onClick={() => handleSelectMovie(movie.id)}
+                                            className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-black"
+                                        >
+                                            {movie.title}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
                         <button
                             className="mb-3 ml-[50px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
                             onClick={() => navigate(`/movies/genres/${selectedGenres.keys().next().value}`)}

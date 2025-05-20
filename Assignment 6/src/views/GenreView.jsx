@@ -29,7 +29,6 @@ function GenreView() {
         setCart(updatedCart);
     };
 
-    // Check if movie is in cart safely
     const isInCart = (movieId) => {
         return cart instanceof Map && cart.has(movieId.toString());
     };
@@ -40,19 +39,25 @@ function GenreView() {
                 {movies.map((movie) => (
                     <div key={movie.id} className="bg-gray-800 text-white p-4 rounded-lg shadow-md">
                         <Link to={`/movies/details/${movie.id}`}>
-                            <img
-                                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                                className="w-full h-[80%] rounded-md mb-2"
-                            />
+                            {movie.poster_path ? (
+                                <img
+                                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                                    alt={movie.title}
+                                    className="w-full h-[80%] rounded-md mb-2 object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-[80%] rounded-md mb-2 bg-gray-700 flex items-center justify-center text-gray-300 text-sm italic">
+                                    Poster Unavailable
+                                </div>
+                            )}
                         </Link>
                         <button
                             onClick={() => handleAddToCart(movie)}
                             disabled={isInCart(movie.id)}
-                            className={`w-full mt-2 px-6 py-2 text-base font-bold rounded-lg ${
-                                isInCart(movie.id)
-                                ? "bg-gray-500 cursor-not-allowed"
-                                : "bg-blue-700 hover:bg-blue-800 cursor-pointer"
-                            }`}
+                            className={`w-full mt-2 px-6 py-2 text-base font-bold rounded-lg ${isInCart(movie.id)
+                                    ? "bg-gray-500 cursor-not-allowed"
+                                    : "bg-blue-700 hover:bg-blue-800 cursor-pointer"
+                                }`}
                         >
                             {isInCart(movie.id) ? "Added to Cart" : "Buy - $$$"}
                         </button>

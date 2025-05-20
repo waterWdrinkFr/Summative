@@ -42,10 +42,17 @@ function DetailView() {
     return (
         <div className="mt-[100px] p-4 text-white">
             <h1 className="text-4xl font-bold mb-4">{movies.title}</h1>
-            <img
-                src={`https://image.tmdb.org/t/p/w200${movies.poster_path}`}
-                className="w-[250px] h-full rounded-md mb-2"
-            />
+            {movies.poster_path ? (
+                <img
+                    src={`https://image.tmdb.org/t/p/w200${movies.poster_path}`}
+                    alt={movies.title}
+                    className="w-[250px] h-[80%] rounded-md mb-2 object-cover"
+                />
+            ) : (
+                <div className="w-full h-[80%] rounded-md mb-2 bg-gray-700 flex items-center justify-center text-gray-300 text-sm italic">
+                    Poster Unavailable
+                </div>
+            )}
             <p className="text-lg mb-2"><strong>Rating:</strong> {movies.vote_average.toFixed(1)}/10</p>
             <p className="text-lg mb-2"><strong>Overview:</strong> {movies.overview}</p>
             <p className="text-lg mb-2"><strong>Runtime:</strong> {movies.runtime} minutes</p>
