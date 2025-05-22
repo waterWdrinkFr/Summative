@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useStoreContext } from "../context";
+import { useStoreContext } from "../context/context.jsx";
 
 function DetailView() {
     const [movies, setMovies] = useState(null);

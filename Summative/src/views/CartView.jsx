@@ -1,4 +1,4 @@
-import { useStoreContext } from "../context";
+import { useStoreContext } from "../context/context.jsx";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../components/Header";

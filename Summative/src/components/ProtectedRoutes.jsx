@@ -1,5 +1,5 @@
 import { Outlet, Navigate } from "react-router-dom";
-import { useStoreContext } from "../context/index.jsx";
+import { useStoreContext } from "../context/context.jsx";
 
 function ProtectedRoutes() {
     const { loggedIn } = useStoreContext();

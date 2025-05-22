@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
-import { useStoreContext } from "../context";
+import { useStoreContext } from "../context/context.jsx";
 
 export function FirstGenreRedirect() {
     const { genres: selectedGenres } = useStoreContext();

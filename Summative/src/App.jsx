@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { StoreProvider, useStoreContext } from "./context";
+import { StoreProvider } from "./context/context.jsx";
 import "./App.css";
 import HomeView from "./views/HomeView.jsx";
 import MoviesView from "./views/MoviesView.jsx";
