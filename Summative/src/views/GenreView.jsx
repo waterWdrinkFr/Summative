@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useStoreContext } from "../context/context.jsx";
+import { useStoreContext } from "../context";
 import axios from "axios";
 
 function GenreView() {
@@ -72,12 +72,12 @@ function GenreView() {
                         <button
                             onClick={() => handleAddToCart(movie)}
                             disabled={isInCart(movie.id)}
-                            className={`w-full mt-2 px-6 py-2 text-base font-bold rounded-lg ${isInCart(movie.id)
+                            className={`w-full mt-2 px-6 py-2 text-sm font-bold rounded-lg ${isInCart(movie.id)
                                 ? "bg-gray-500 cursor-not-allowed"
                                 : "bg-blue-700 hover:bg-blue-800 cursor-pointer"
                                 }`}
                         >
-                            {isInCart(movie.id) ? "Added to Cart" : "Buy - $$$"}
+                            {isInCart(movie.id) ? "Added" : "Buy"}
                         </button>
                     </div>
                 ))}
@@ -85,11 +85,10 @@ function GenreView() {
             <button
                 onClick={() => handlePageChange(-1)}
                 disabled={page === 1 || loading}
-                className="mt-4 ml-95.5 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+                className="mt-4 ml-96 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
             >
                 Previous
             </button>
-
             <button
                 onClick={() => handlePageChange(1)}
                 disabled={page === totalPages.current || loading}
@@ -97,8 +96,7 @@ function GenreView() {
             >
                 Next
             </button>
-            {loading && <span className="ml-64 text-white">Loading...</span>}
-            <span className="ml-64 text-white">Page {page} of {totalPages.current}</span>
+            <span className="ml-48 text-white">Page {page} of {totalPages.current}</span>
         </div>
     );
 }
