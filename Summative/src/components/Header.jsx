@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useStoreContext } from "../context/context.jsx";
+import { useStoreContext } from "../context";
 import { Map } from "immutable";
 import { useState, useCallback, useRef } from "react";
 
@@ -13,12 +13,11 @@ function Header() {
     const handleSearchChange = useCallback((e) => {
         const value = e.target.value;
         setQuery(value);
-
         clearTimeout(debounceTimer.current);
 
         debounceTimer.current = setTimeout(() => {
             if (value.trim()) {
-                fetch(`https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_TMDB_KEY}&query=${encodeURIComponent(value)}`)
+                fetch(`https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_TMDB_KEY}&query=${encodeURIComponent(value)}&include_adult=false`)
                     .then((res) => res.json())
                     .then((data) => {
                         if (data.results) {
@@ -59,7 +58,6 @@ function Header() {
                     <p className="text-white font-medium">Hello {name}, welcome to JStreaming!</p>
                 </div>
             )}
-
             <div className="flex items-center h-full">
                 <button
                     className="mb-5 ml-5 w-[200px] p-1 rounded-lg text-3xl font-bold text-white bg-blue-900 cursor-pointer"
@@ -67,7 +65,6 @@ function Header() {
                 >
                     JStreaming
                 </button>
-
                 {loggedIn ? (
                     <>
                         <div className="relative mb-2.5 ml-[140px]">
@@ -84,7 +81,6 @@ function Header() {
 
                                 }}
                             />
-
                             {results.length > 0 && (
                                 <ul className="absolute top-[35px] w-full bg-white rounded-lg shadow-lg z-50">
                                     {results.map((movie) => (
@@ -100,7 +96,7 @@ function Header() {
                             )}
                         </div>
                         <button
-                            className="mb-3 ml-[50px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
+                            className="mb-3 ml-[75px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
                             onClick={() => navigate(`/movies/genres/${selectedGenres.keys().next().value}`)}
                         >
                             GENRES
