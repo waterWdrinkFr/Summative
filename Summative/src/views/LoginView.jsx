@@ -26,6 +26,25 @@ function LoginView() {
         }
     };
 
+    async function googleSignIn() {
+        // if (selectedGenres.size < 5) {
+        //     alert("Please select at least 5 genres.");
+        //     return;
+        // }
+        // else {
+            const provider = new GoogleAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                setUser(result.user);
+                setLoggedIn(true);
+                setName(result.user.displayName || name);
+                navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
+            } catch (error) {
+                console.error("Error signing in with Google:", error);
+            }
+        // }
+    }
+
     return (
         <div className="flex justify-center items-center h-screen bg-gradient-to-b from-black to-blue-600">
             <div className="bg-black p-8 rounded-lg shadow-lg w-[400px]">
@@ -58,12 +77,21 @@ function LoginView() {
                     {error && <p className="text-red-500 text-sm">{error}</p>}
                     <button
                         type="submit"
-                        className="w-full bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer"
+                        className="mt-[5%] ml-[8%] w-[84%] bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer"
                     >
                         Login
                     </button>
                 </form>
-
+                <div className="flex justify-center mb-4 mt-4">
+                    <button
+                        type="button"
+                        onClick={() => googleSignIn()}
+                        className="bg-white text-black px-12 py-2 rounded-md shadow flex items-center cursor-pointer"
+                    >
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 mr-2" />
+                        Sign in with Google
+                    </button>
+                </div>
                 <p className="text-sm text-center text-gray-600 mt-4">
                     Don't have an account?{" "}
                     <span

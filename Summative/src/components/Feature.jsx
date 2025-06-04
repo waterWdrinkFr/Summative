@@ -34,7 +34,7 @@ function Feature() {
                         <img
                             src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
                             alt={movie.title}
-                            className="w-full h-[500px] rounded-md mb-2 object-cover"
+                            className="w-full h-[450px] rounded-md mb-2 object-cover"
                         />
                     </Link>
                 ))}

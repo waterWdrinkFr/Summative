@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleA
 import { auth, firestore } from "../firebase/firebase.jsx";
 import { doc, setDoc } from "firebase/firestore";
 import axios from "axios";
+import { set } from "immutable";
 
 function RegisterView() {
     const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, selectedGenres, setSelectedGenres, setLoggedIn } = useStoreContext(); const [confirmPassword, setConfirmPassword] = useState("");
@@ -50,40 +51,38 @@ function RegisterView() {
             alert("Passwords do not match.");
             return;
         }
-
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            await updateProfile(userCredential.user, { displayName: name });
-            setLoggedIn(true);
-            setName(name);
-            navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
-        } catch (error) {
-            if (error.code === "auth/email-already-in-use") {
-                alert("This email is already registered. Please log in or use a different email.");
-            } else {
-                alert("Registration failed. Please try again.");
+        else {
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(userCredential.user, { displayName: name });
+                setLoggedIn(true);
+                setName(name);
+                navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
+            } catch (error) {
+                if (error.code === "auth/email-already-in-use") {
+                    alert("This email is already registered. Please log in or use a different email.");
+                } else {
+                    alert("Registration failed. Please try again.");
+                }
             }
         }
     };
 
-    async function googleSignUp() {
+    async function googleSignIn() {
         if (selectedGenres.size < 5) {
             alert("Please select at least 5 genres.");
             return;
         }
-
-        try {
-            const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
-            setLoggedIn(true);
-            setName(user.displayName || "Google User");
-            navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
-        } catch (error) {
-            if (error.code === "auth/account-exists-with-different-credential") {
-                alert("This email is already registered. Please log in or use a different email.");
-            } else if (error.code === "auth/email-already-in-use") {
-                alert("This email is already registered.");
-            } else {
-                alert("Registration failed. Please try again.");
+        else {
+            const provider = new GoogleAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                // setUser(result.user);
+                setLoggedIn(true);
+                setName(result.user.displayName || name);
+                navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
+            } catch (error) {
+                console.error("Error signing in with Google:", error);
             }
         }
     }
@@ -133,15 +132,15 @@ function RegisterView() {
                             ))}
                         </ul>
                     </div>
-                    <button type="submit" className="ml-[28%] mt-4 w-[44%] bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer">
+                    <button type="submit" className="ml-[21.5%] mt-4 w-[57%] bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer">
                         Register
                     </button>
                 </form>
                 <div className="flex justify-center mb-4 mt-4">
                     <button
                         type="button"
-                        onClick={() => googleSignUp()}
-                        className="bg-white text-black px-4 py-2 rounded-md shadow flex items-center cursor-pointer"
+                        onClick={() => googleSignIn()}
+                        className="bg-white text-black px-12 py-2 rounded-md shadow flex items-center cursor-pointer"
                     >
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 mr-2" />
                         Sign up with Google
