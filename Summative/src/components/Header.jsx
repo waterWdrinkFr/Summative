@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useStoreContext } from "../context";
+import { useStoreContext } from "../context/context.jsx";
 import { Map } from "immutable";
 import { useState, useCallback, useRef } from "react";
 

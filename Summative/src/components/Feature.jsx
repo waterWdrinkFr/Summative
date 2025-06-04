@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { useStoreContext } from "../context/context.jsx";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Feature() {
     const [movies, setMovies] = useState([]);
@@ -26,19 +28,15 @@ function Feature() {
     return (
         <div className="p-15">
             <h2 className="text-2xl font-bold text-center text-white mt-[9%]">Now Playing</h2>
-            <div className="flex flex-wrap justify-center gap-18">
+            <div className="mt-12 flex flex-wrap justify-center gap-18">
                 {movies.map((movie) => (
-                    <div key={movie.id} className="mt-[1%] w-[25%] h-[500px] bg-blue-800 text-white rounded-lg overflow-hidden shadow-lg">
-                        <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} className="w-full h-[85%] object-cover" />
-                        <div className="flex items-center justify-center h-[7.5%]">
-                            <span 
-                                className="px-10 mt-10 hover:underline cursor-pointer text-white text-base font-bold"
-                                onClick={() => navigate(`/movies/details/${movie.id}`)}
-                            >
-                                {movie.title}
-                            </span>
-                        </div>
-                    </div>
+                    <Link to={`/movies/details/${movie.id}`}>
+                        <img
+                            src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                            alt={movie.title}
+                            className="w-full h-[500px] rounded-md mb-2 object-cover"
+                        />
+                    </Link>
                 ))}
             </div>
         </div>
