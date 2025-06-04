@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import { auth, firestore } from "../firebase";
 import { Map } from "immutable";
 
 const StoreContext = createContext();
