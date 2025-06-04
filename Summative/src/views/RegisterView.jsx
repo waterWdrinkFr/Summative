@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useStoreContext } from "../context";
+import { useStoreContext } from "../context/context.jsx";
+import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth, firestore } from "../firebase/firebase.jsx";
+import { doc, setDoc } from "firebase/firestore";
 import axios from "axios";
 
 function RegisterView() {
-    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, selectedGenres, setSelectedGenres } = useStoreContext();
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, selectedGenres, setSelectedGenres, setLoggedIn } = useStoreContext(); const [confirmPassword, setConfirmPassword] = useState("");
     const [genres, setGenres] = useState([]);
     const navigate = useNavigate();
 
@@ -37,7 +39,7 @@ function RegisterView() {
 
     const isGenreSelected = (id) => selectedGenres.has(id);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (selectedGenres.size < 5) {
@@ -48,8 +50,43 @@ function RegisterView() {
             alert("Passwords do not match.");
             return;
         }
-        navigate("/login");
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(userCredential.user, { displayName: name });
+            setLoggedIn(true);
+            setName(name);
+            navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
+        } catch (error) {
+            if (error.code === "auth/email-already-in-use") {
+                alert("This email is already registered. Please log in or use a different email.");
+            } else {
+                alert("Registration failed. Please try again.");
+            }
+        }
     };
+
+    async function googleSignUp() {
+        if (selectedGenres.size < 5) {
+            alert("Please select at least 5 genres.");
+            return;
+        }
+
+        try {
+            const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
+            setLoggedIn(true);
+            setName(user.displayName || "Google User");
+            navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
+        } catch (error) {
+            if (error.code === "auth/account-exists-with-different-credential") {
+                alert("This email is already registered. Please log in or use a different email.");
+            } else if (error.code === "auth/email-already-in-use") {
+                alert("This email is already registered.");
+            } else {
+                alert("Registration failed. Please try again.");
+            }
+        }
+    }
 
     return (
         <div className="flex justify-center items-center h-screen bg-gradient-to-b from-black to-blue-600">
@@ -96,10 +133,20 @@ function RegisterView() {
                             ))}
                         </ul>
                     </div>
-                    <button type="submit" className="mt-4 w-full bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer">
+                    <button type="submit" className="ml-[28%] mt-4 w-[44%] bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer">
                         Register
                     </button>
                 </form>
+                <div className="flex justify-center mb-4 mt-4">
+                    <button
+                        type="button"
+                        onClick={() => googleSignUp()}
+                        className="bg-white text-black px-4 py-2 rounded-md shadow flex items-center cursor-pointer"
+                    >
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 mr-2" />
+                        Sign up with Google
+                    </button>
+                </div>
                 <p className="mt-3 text-sm text-center text-gray-600">
                     Already have an account?{" "}
                     <span onClick={() => navigate("/login")} className="text-blue-600 underline cursor-pointer">

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useStoreContext } from "../context";
+import { useStoreContext } from "../context/context.jsx";
 import axios from "axios";
 
 function GenreView() {
@@ -96,7 +96,7 @@ function GenreView() {
             >
                 Next
             </button>
-            <span className="ml-48 text-white">Page {page} of {totalPages.current}</span>
+            <span className="ml-46 text-white">Page {page} of {totalPages.current}</span>
         </div>
     );
 }

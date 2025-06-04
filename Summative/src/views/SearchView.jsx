@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useStoreContext } from "../context";
+import { useStoreContext } from "../context/context.jsx";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 

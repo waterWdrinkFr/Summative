@@ -9,7 +9,7 @@ export function FirstGenreRedirect() {
 }
 
 function LoginView() {
-    const { email, password, setLoggedIn, selectedGenres } = useStoreContext();
+    const { setLoggedIn, setName } = useStoreContext();
     const [inputEmail, setInputEmail] = useState("");
     const [inputPassword, setInputPassword] = useState("");
     const [error, setError] = useState("");
@@ -17,9 +17,10 @@ function LoginView() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (inputEmail === email && inputPassword === password) {
+        if (inputEmail === "j@s" && inputPassword === "js") {
             setLoggedIn(true);
-            navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
+            navigate("/");
+            setName("Justin");
         } else {
             setError("Invalid email or password.");
         }
