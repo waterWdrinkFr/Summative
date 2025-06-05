@@ -62,7 +62,8 @@ function RegisterView() {
                 if (error.code === "auth/email-already-in-use") {
                     alert("This email is already registered. Please log in or use a different email.");
                 } else {
-                    alert("Registration failed. Please try again.");
+                    console.error("Error during registration:", error);
+                    // alert("Registration failed. Please try again.");
                 }
             }
         }
@@ -96,7 +97,7 @@ function RegisterView() {
                         { id: "name", label: "Name", value: name, setValue: setName, type: "text", placeholder: "Enter your first name" },
                         { id: "lastName", label: "Last Name", value: lastName, setValue: setLastName, type: "text", placeholder: "Enter your last name" },
                         { id: "email", label: "Email", value: email, setValue: setEmail, type: "email", placeholder: "Enter your email" },
-                        { id: "password", label: "Password", value: password, setValue: setPassword, type: "password", placeholder: "Enter your password" },
+                        { id: "password", label: "Password (6 Characters Minimum)", value: password, setValue: setPassword, type: "password", placeholder: "Enter your password" },
                         { id: "confirmPassword", label: "Confirm Password", value: confirmPassword, setValue: setConfirmPassword, type: "password", placeholder: "Re-enter your password" }
                     ].map(({ id, label, value, setValue, type, placeholder }) => (
                         <div key={id}>
@@ -143,7 +144,7 @@ function RegisterView() {
                         className="bg-white text-black px-12 py-2 rounded-md shadow flex items-center cursor-pointer"
                     >
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 mr-2" />
-                        Sign up with Google
+                        Sign Up with Google
                     </button>
                 </div>
                 <p className="mt-3 text-sm text-center text-gray-600">

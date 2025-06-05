@@ -30,7 +30,7 @@ function Feature() {
             <h2 className="text-2xl font-bold text-center text-white mt-[9%]">Now Playing</h2>
             <div className="mt-12 flex flex-wrap justify-center gap-18">
                 {movies.map((movie) => (
-                    <Link to={`/movies/details/${movie.id}`}>
+                    <Link to={`/movies/details/${movie.id}`} key={movie.id}>
                         <img
                             src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
                             alt={movie.title}
