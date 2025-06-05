@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useStoreContext } from "../context/context.jsx";
-import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { auth, firestore } from "../firebase/firebase.jsx";
-import { doc, setDoc } from "firebase/firestore";
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "../firebase/firebase.jsx";
 
 export function FirstGenreRedirect() {
     const { genres: selectedGenres } = useStoreContext();
@@ -18,14 +17,23 @@ function LoginView() {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (inputEmail === "j@s" && inputPassword === "js") {
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, inputEmail, inputPassword);
             setLoggedIn(true);
+            setName(userCredential.user.displayName || "");
             navigate("/");
-            setName("Justin");
-        } else {
-            setError("Invalid email or password.");
+        } catch (error) {
+            if (error.code === "auth/wrong-password") {
+                setError("Incorrect password.");
+            } else if (error.code === "auth/user-not-found") {
+                setError("No account found with this email.");
+            } else if (error.code === "auth/invalid-email") {
+                setError("Please enter a valid email address.");
+            } else {
+                setError("Login failed. Please try again.");
+            }
         }
     };
 
