@@ -2,14 +2,16 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context/context.jsx";
 import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { auth, firestore } from "../firebase/firebase.jsx";
-import { doc, setDoc } from "firebase/firestore";
+import { auth } from "../firebase/firebase.jsx";
 import axios from "axios";
-import { set } from "immutable";
 
 function RegisterView() {
-    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, selectedGenres, setSelectedGenres, setLoggedIn } = useStoreContext(); const [confirmPassword, setConfirmPassword] = useState("");
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [genres, setGenres] = useState([]);
+    const { selectedGenres, setSelectedGenres, setUser } = useStoreContext();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -53,10 +55,6 @@ function RegisterView() {
         }
         else {
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await updateProfile(userCredential.user, { displayName: name });
-                setLoggedIn(true);
-                setName(name);
                 navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
             } catch (error) {
                 if (error.code === "auth/email-already-in-use") {
@@ -81,9 +79,7 @@ function RegisterView() {
             const provider = new GoogleAuthProvider();
             try {
                 const result = await signInWithPopup(auth, provider);
-                // setUser(result.user);
-                setLoggedIn(true);
-                setName(result.user.displayName || name);
+                setUser(result.user);
                 navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
             } catch (error) {
                 console.error("Error signing in with Google:", error);
@@ -97,8 +93,8 @@ function RegisterView() {
                 <h1 className="text-2xl font-bold text-center text-blue-700 mb-6">Register</h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {[
-                        { id: "name", label: "Name", value: name, setValue: setName, type: "text", placeholder: "Enter your first name" },
-                        { id: "lastName", label: "Last Name", value: lastName, setValue: setLastName, type: "text", placeholder: "Enter your last name" },
+                        { id: "name", label: "Name", type: "text", placeholder: "Enter your first name" },
+                        { id: "lastName", label: "Last Name", type: "text", placeholder: "Enter your last name" },
                         { id: "email", label: "Email", value: email, setValue: setEmail, type: "email", placeholder: "Enter your email" },
                         { id: "password", label: "Password (6 Characters Minimum)", value: password, setValue: setPassword, type: "password", placeholder: "Enter your password" },
                         { id: "confirmPassword", label: "Confirm Password", value: confirmPassword, setValue: setConfirmPassword, type: "password", placeholder: "Re-enter your password" }

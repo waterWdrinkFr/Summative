@@ -2,13 +2,15 @@ import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context/context.jsx";
 import { Map } from "immutable";
 import { useState, useCallback, useRef } from "react";
+import { auth } from "../firebase/firebase.jsx";
 
 function Header() {
-    const { name, setName, setLastName, setEmail, setPassword, selectedGenres, setSelectedGenres, setCart, loggedIn, setLoggedIn } = useStoreContext();
-    const navigate = useNavigate();
+    const user = auth.currentUser;
+    const displayName = user?.displayName || name || "User";
     const [query, setQuery] = useState("");
     const debounceTimer = useRef(null);
     const [results, setResults] = useState([]);
+    const navigate = useNavigate();
 
     const handleSearchChange = useCallback((e) => {
         const value = e.target.value;
@@ -47,15 +49,14 @@ function Header() {
         setPassword("");
         setSelectedGenres(Map());
         setCart([]);
-        setLoggedIn(false);
         navigate("/login");
     };
 
     return (
         <div className="fixed top-0 left-0 w-full h-[120px] bg-gradient-to-b from-black to-transparent z-20">
-            {loggedIn && (
+            { selectedGenres.size > 0 && (
                 <div className="text-center w-full bg-blue-900 bg-opacity-75">
-                    <p className="text-white font-medium">Hello {name}, welcome to JStreaming!</p>
+                    <p className="text-white font-medium">Hello {displayName}, welcome to JStreaming!</p>
                 </div>
             )}
             <div className="flex items-center h-full">
@@ -65,7 +66,7 @@ function Header() {
                 >
                     JStreaming
                 </button>
-                {loggedIn ? (
+                {selectedGenres.size ? (
                     <>
                         <div className="relative mb-2.5 ml-[140px]">
                             <input
@@ -96,8 +97,13 @@ function Header() {
                             )}
                         </div>
                         <button
-                            className="mb-3 ml-[75px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
-                            onClick={() => navigate(`/movies/genres/${selectedGenres.keys().next().value}`)}
+                            className="mb-3 ml-[75px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer disabled:opacity-50"
+                            onClick={() => {
+                                if (selectedGenres.size > 0) {
+                                    navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
+                                }
+                            }}
+                            disabled={selectedGenres.size === 0}
                         >
                             GENRES
                         </button>
