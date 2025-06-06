@@ -59,12 +59,9 @@ function RegisterView() {
             } catch (error) {
                 if (error.code === "auth/email-already-in-use") {
                     alert("This email is already registered. Please log in or use a different email.");
-                } else if (error.code === "auth/invalid-email") {
-                    alert("Please enter a valid email address.");
-                }
-                else {
+                } else {
                     console.error("Error during registration:", error);
-                    alert(" Registration failed.Please try again.");
+                    alert("Registration failed. Please try again.");
                 }
             }
         }
