@@ -6,6 +6,7 @@ import { auth } from "../firebase/firebase.jsx";
 import axios from "axios";
 
 function RegisterView() {
+    const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -55,6 +56,12 @@ function RegisterView() {
         }
         else {
             try {
+                const user = (await createUserWithEmailAndPassword(auth, emailInput, passInput)).user;
+                await updateProfile(user, { displayName: `${firstNameInput} ${lastNameInput}` });
+                setUser(user);
+                setSelectedGenres(selectedGenres);
+                const docRef = doc(firestore, "users", user.uid);
+                await setDoc(docRef, { genres: selectedGenres });
                 navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
             } catch (error) {
                 if (error.code === "auth/email-already-in-use") {
@@ -75,8 +82,11 @@ function RegisterView() {
         else {
             const provider = new GoogleAuthProvider();
             try {
-                const result = await signInWithPopup(auth, provider);
-                setUser(result.user);
+                const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
+                setUser(user);
+                setGenres(selectedGenres);
+                const docRef = doc(firestore, "users", user.uid);
+                await setDoc(docRef, { genres: selectedGenres, purchases: [] });
                 navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
             } catch (error) {
                 console.error("Error signing in with Google:", error);
@@ -90,8 +100,8 @@ function RegisterView() {
                 <h1 className="text-2xl font-bold text-center text-blue-700 mb-6">Register</h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {[
-                        { id: "name", label: "Name", type: "text", placeholder: "Enter your first name" },
-                        { id: "lastName", label: "Last Name", type: "text", placeholder: "Enter your last name" },
+                        { id: "name", label: "Name", type: "text", value: firstName, setValue: setFirstName, placeholder: "Enter your first name" },
+                        { id: "lastName", label: "Last Name", value: lastName, setValue: setLastName, type: "text", placeholder: "Enter your last name" },
                         { id: "email", label: "Email", value: email, setValue: setEmail, type: "email", placeholder: "Enter your email" },
                         { id: "password", label: "Password (6 Characters Minimum)", value: password, setValue: setPassword, type: "password", placeholder: "Enter your password" },
                         { id: "confirmPassword", label: "Confirm Password", value: confirmPassword, setValue: setConfirmPassword, type: "password", placeholder: "Re-enter your password" }
