@@ -11,7 +11,7 @@ export function FirstGenreRedirect() {
 }
 
 function LoginView() {
-    const { setLoggedIn, setName } = useStoreContext();
+    const { setName } = useStoreContext();
     const [inputEmail, setInputEmail] = useState("");
     const [inputPassword, setInputPassword] = useState("");
     const [error, setError] = useState("");
@@ -21,7 +21,6 @@ function LoginView() {
         e.preventDefault();
         try {
             const userCredential = await signInWithEmailAndPassword(auth, inputEmail, inputPassword);
-            setLoggedIn(true);
             setName(userCredential.user.displayName || "");
             navigate("/");
         } catch (error) {
@@ -46,7 +45,6 @@ function LoginView() {
             const provider = new GoogleAuthProvider();
             try {
                 const result = await signInWithPopup(auth, provider);
-                setLoggedIn(true);
                 setName(result.user.displayName || name);
                 navigate("/");
             } catch (error) {
@@ -99,7 +97,7 @@ function LoginView() {
                         className="bg-white text-black px-12 py-2 rounded-md shadow flex items-center cursor-pointer"
                     >
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 mr-2" />
-                        Sign In with Google
+                        Sign in with Google
                     </button>
                 </div>
                 <p className="text-sm text-center text-gray-600 mt-4">

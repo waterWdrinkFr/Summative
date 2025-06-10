@@ -105,11 +105,11 @@ function SearchView() {
 				<button
 					onClick={() => handlePageChange(1)}
 					disabled={page === totalPages.current || loading}
-					className="mt-2 ml-4 px-8 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+					className="mt-8 ml-4 px-8 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
 				>
 					Next
 				</button>
-				<span className="ml-99 text-white">Page {page} of {totalPages.current}</span>
+				<span className="ml-98 text-white">Page {page} of {totalPages.current}</span>
 			</div>
 			<Footer />
 		</>

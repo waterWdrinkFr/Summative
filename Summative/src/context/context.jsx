@@ -10,8 +10,6 @@ export const StoreProvider = ({ children }) => {
     const [password, setPassword] = useState("");
     const [cart, setCart] = useState(new Map());
     const [selectedGenres, setSelectedGenres] = useState(Map());
-    const [loggedIn, setLoggedIn] = useState(false);
-
     // useEffect(() => {
     //     onAuthStateChanged(auth, (user) => { 
     //         if (user) {
@@ -30,7 +28,7 @@ export const StoreProvider = ({ children }) => {
     // }
 
     return (
-        <StoreContext.Provider value={{ name, setName, lastName, setLastName, email, setEmail, password, setPassword, cart, setCart, selectedGenres, setSelectedGenres, loggedIn, setLoggedIn }}>
+        <StoreContext.Provider value={{ name, setName, lastName, setLastName, email, setEmail, password, setPassword, cart, setCart, selectedGenres, setSelectedGenres }}>
             {children}
         </StoreContext.Provider>
     );

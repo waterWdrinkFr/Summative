@@ -92,7 +92,7 @@ function GenreView() {
             <button
                 onClick={() => handlePageChange(1)}
                 disabled={page === totalPages.current || loading}
-                className="mt-2 ml-4 px-8 py-2 bg-blue-600 text-white rounded-lg cursor-pointer"
+                className="mt-8 ml-4 px-8 py-2 bg-blue-600 text-white rounded-lg cursor-pointer"
             >
                 Next
             </button>

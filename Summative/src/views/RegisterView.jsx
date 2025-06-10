@@ -8,7 +8,9 @@ import axios from "axios";
 import { set } from "immutable";
 
 function RegisterView() {
-    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, selectedGenres, setSelectedGenres, setLoggedIn } = useStoreContext(); const [confirmPassword, setConfirmPassword] = useState("");
+    const { email, setEmail, password, setPassword, selectedGenres, setSelectedGenres } = useStoreContext(); const [confirmPassword, setConfirmPassword] = useState("");
+    const [name, setName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [genres, setGenres] = useState([]);
     const navigate = useNavigate();
 
@@ -55,8 +57,6 @@ function RegisterView() {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 await updateProfile(userCredential.user, { displayName: name });
-                setLoggedIn(true);
-                setName(name);
                 navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
             } catch (error) {
                 if (error.code === "auth/email-already-in-use") {
@@ -78,9 +78,6 @@ function RegisterView() {
             const provider = new GoogleAuthProvider();
             try {
                 const result = await signInWithPopup(auth, provider);
-                // setUser(result.user);
-                setLoggedIn(true);
-                setName(result.user.displayName || name);
                 navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
             } catch (error) {
                 console.error("Error signing in with Google:", error);
