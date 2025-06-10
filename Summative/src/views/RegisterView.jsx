@@ -2,17 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context/context.jsx";
 import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { auth } from "../firebase/firebase.jsx";
+import { auth, firestore } from "../firebase/firebase.jsx";
+import { doc, setDoc } from "firebase/firestore";
 import axios from "axios";
+import { set } from "immutable";
 
 function RegisterView() {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const { name, setName, lastName, setLastName, email, setEmail, password, setPassword, selectedGenres, setSelectedGenres, setLoggedIn } = useStoreContext(); const [confirmPassword, setConfirmPassword] = useState("");
     const [genres, setGenres] = useState([]);
-    const { selectedGenres, setSelectedGenres, setUser } = useStoreContext();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -56,12 +53,10 @@ function RegisterView() {
         }
         else {
             try {
-                const user = (await createUserWithEmailAndPassword(auth, emailInput, passInput)).user;
-                await updateProfile(user, { displayName: `${firstNameInput} ${lastNameInput}` });
-                setUser(user);
-                setSelectedGenres(selectedGenres);
-                const docRef = doc(firestore, "users", user.uid);
-                await setDoc(docRef, { genres: selectedGenres });
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(userCredential.user, { displayName: name });
+                setLoggedIn(true);
+                setName(name);
                 navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
             } catch (error) {
                 if (error.code === "auth/email-already-in-use") {
@@ -82,11 +77,10 @@ function RegisterView() {
         else {
             const provider = new GoogleAuthProvider();
             try {
-                const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
-                setUser(user);
-                setGenres(selectedGenres);
-                const docRef = doc(firestore, "users", user.uid);
-                await setDoc(docRef, { genres: selectedGenres, purchases: [] });
+                const result = await signInWithPopup(auth, provider);
+                // setUser(result.user);
+                setLoggedIn(true);
+                setName(result.user.displayName || name);
                 navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
             } catch (error) {
                 console.error("Error signing in with Google:", error);
@@ -100,10 +94,10 @@ function RegisterView() {
                 <h1 className="text-2xl font-bold text-center text-blue-700 mb-6">Register</h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {[
-                        { id: "name", label: "Name", type: "text", value: firstName, setValue: setFirstName, placeholder: "Enter your first name" },
+                        { id: "name", label: "Name", value: name, setValue: setName, type: "text", placeholder: "Enter your first name" },
                         { id: "lastName", label: "Last Name", value: lastName, setValue: setLastName, type: "text", placeholder: "Enter your last name" },
                         { id: "email", label: "Email", value: email, setValue: setEmail, type: "email", placeholder: "Enter your email" },
-                        { id: "password", label: "Password (6 Characters Minimum)", value: password, setValue: setPassword, type: "password", placeholder: "Enter your password" },
+                        { id: "password", label: "Password (at least 6 characters)", value: password, setValue: setPassword, type: "password", placeholder: "Enter your password" },
                         { id: "confirmPassword", label: "Confirm Password", value: confirmPassword, setValue: setConfirmPassword, type: "password", placeholder: "Re-enter your password" }
                     ].map(({ id, label, value, setValue, type, placeholder }) => (
                         <div key={id}>
@@ -150,7 +144,7 @@ function RegisterView() {
                         className="bg-white text-black px-12 py-2 rounded-md shadow flex items-center cursor-pointer"
                     >
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 mr-2" />
-                        Sign Up with Google
+                        Sign up with Google
                     </button>
                 </div>
                 <p className="mt-3 text-sm text-center text-gray-600">

@@ -1,52 +1,41 @@
-import { createContext, useState, useContext, useEffect } from "react";
-import { Map } from 'immutable';
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { auth, firestore } from "../firebase/firebase.jsx";
+import { createContext, useContext, useState } from "react";
+import { Map } from "immutable";
 
 const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [name, setName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [cart, setCart] = useState(new Map());
     const [selectedGenres, setSelectedGenres] = useState(Map());
-    const [cart, setCart] = useState(Map());
-    const [purchases, setPurchases] = useState(Map());
+    const [loggedIn, setLoggedIn] = useState(false);
 
-    useEffect(() => {
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                setUser(user);
-                const sessionCart = localStorage.getItem(user.uid);
-                if (sessionCart) {
-                    setCart(Map(JSON.parse(sessionCart)));
-                }
+    // useEffect(() => {
+    //     onAuthStateChanged(auth, (user) => { 
+    //         if (user) {
+    //             setUser(user);
+    //             console.log("Have a user");
+    //         } else {
+    //             setUser(null);
+    //             console.log("Do not have a user");
+    //         }
+    //         setLoading(false);
+    //     });
+    // }, []);
 
-                const docRef = doc(firestore, "users", user.uid);
-                try {
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        const fetchedGenres = docSnap.data().genres;
-                        setGenres(fetchedGenres);
-                        const fetchedPurchases = Map(docSnap.data().purchases);
-                        setPurchases(fetchedPurchases);
-                    } else {
-                        setGenres([]);
-                        setPurchases(Map());
-                    }
-                } catch (error) {
-                    console.log("Error fetching genres:", error);
-                }
-            }
-        });
-    }, []);
+    // if (loading) {
+    //     return <div>Loading...</div>;
+    // }
 
     return (
-        <StoreContext.Provider value={{ cart, setCart, selectedGenres, setSelectedGenres, user, setUser, purchases, setPurchases }}>
+        <StoreContext.Provider value={{ name, setName, lastName, setLastName, email, setEmail, password, setPassword, cart, setCart, selectedGenres, setSelectedGenres, loggedIn, setLoggedIn }}>
             {children}
         </StoreContext.Provider>
     );
-}
+};
 
 export const useStoreContext = () => {
     return useContext(StoreContext);
-}
+};
