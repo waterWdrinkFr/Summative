@@ -10,8 +10,7 @@ function Header() {
     const [query, setQuery] = useState("");
     const debounceTimer = useRef(null);
     const [results, setResults] = useState([]);
-    const updatedUser = auth.currentUser;
-
+    
     const handleSearchChange = useCallback((e) => {
         const value = e.target.value;
         setQuery(value);
@@ -56,7 +55,7 @@ function Header() {
         <div className="fixed top-0 left-0 w-full h-[120px] bg-gradient-to-b from-black to-transparent z-20">
             {selectedGenres.size > 0 && (
                 <div className="text-center w-full bg-blue-900 bg-opacity-75">
-                    <p className="text-white font-medium">Hello {updatedUser.displayName}, welcome to JStreaming!</p>
+                    <p className="text-white font-medium">Hello {auth.currentUser.displayName.trim().split(" ")[0]}, welcome to JStreaming!</p>
                 </div>
             )}
             <div className="flex items-center h-full">

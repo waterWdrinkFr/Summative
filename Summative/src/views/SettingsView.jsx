@@ -2,11 +2,17 @@ import { useStoreContext } from "../context/context.jsx";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { auth } from "../firebase/firebase.jsx";
+import { doc, setDoc } from "firebase/firestore";
+import { firestore } from "../firebase/firebase.jsx";
+import { updateProfile } from "firebase/auth";
 
 function SettingsView() {
-    const { name, setName, lastName, setLastName, email, selectedGenres, setSelectedGenres } = useStoreContext();
+    const { email, selectedGenres, setSelectedGenres } = useStoreContext();
     const navigate = useNavigate();
     const [genres, setGenres] = useState([]);
+    const [firstName, setFirstName] = useState(auth.currentUser.displayName.trim().split(" ")[0]);
+    const [lastName, setLastName] = useState(auth.currentUser.displayName.trim().split(" ")[1]);
 
     useEffect(() => {
         const fetchGenres = async () => {
@@ -36,14 +42,33 @@ function SettingsView() {
 
     const isGenreSelected = (id) => selectedGenres.has(id);
 
-    const handleSave = (e) => {
+    const handleSave = async (e) => {
         e.preventDefault();
 
         if (selectedGenres.size < 5) {
             alert("Please select at least 5 genres.");
             return;
         }
-        navigate("/");
+
+        try {
+            await updateProfile(auth.currentUser, {
+                displayName: `${firstName} ${lastName}`
+            });
+
+            await setDoc(
+                doc(firestore, "users", auth.currentUser.uid),
+                {
+                    genres: Array.from(selectedGenres.entries()).map(([id, name]) => ({ id, name }))
+                },
+                { merge: true }
+            );
+
+            alert("Changes saved successfully");
+            navigate("/");
+        } catch (error) {
+            alert("Failed to update profile.");
+            console.error("Error updating profile:", error);
+        }
     };
 
     return (
@@ -53,7 +78,7 @@ function SettingsView() {
                 <form onSubmit={handleSave} className="space-y-4">
                     {[
                         { id: "email", label: "Email", value: email, type: "email", placeholder: "Email", disabled: true, pointerEvents: 'none' },
-                        { id: "name", label: "Name", value: name, setValue: setName, type: "text", placeholder: "Enter your first name" },
+                        { id: "name", label: "Name", value: firstName, setValue: setFirstName, type: "text", placeholder: "Enter your first name" },
                         { id: "lastName", label: "Last Name", value: lastName, setValue: setLastName, type: "text", placeholder: "Enter your last name" }
                     ].map(({ id, label, value, setValue, type, placeholder, disabled }) => (
                         <div key={id}>

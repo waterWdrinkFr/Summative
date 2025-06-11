@@ -56,7 +56,9 @@ function RegisterView() {
         else {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await updateProfile(userCredential.user, { displayName: name });
+                await updateProfile(userCredential.user, { displayName: `${name} ${lastName}` });
+                console.log(auth.currentUser.displayName.trim().split(" ")[0])
+                console.log(auth.currentUser.displayName.trim().split(" ")[1])
                 navigate(`/movies/genres/${selectedGenres.keys().next().value}`);
             } catch (error) {
                 if (error.code === "auth/email-already-in-use") {
