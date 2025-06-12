@@ -15,7 +15,7 @@ function SettingsView() {
     const [lastName, setLastName] = useState(auth.currentUser.displayName.trim().split(" ")[1]);
 
     useEffect(() => {
-        const fetchGenres = async () => {
+        const fetchGenresAndUserGenres = async () => {
             try {
                 const { data } = await axios.get(
                     `https://api.themoviedb.org/3/genre/movie/list?api_key=${import.meta.env.VITE_TMDB_KEY}`
@@ -24,25 +24,20 @@ function SettingsView() {
                     [28, 12, 16, 80, 10751, 14, 36, 27, 9648, 878, 10752, 37].includes(genre.id)
                 );
                 setGenres(availableGenres);
+
+                const docRef = doc(firestore, "users", auth.currentUser.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    setSelectedGenres(docSnap.data().genres || []);
+                } else {
+                    setSelectedGenres([]);
+                }
             } catch (error) {
-                console.error("Error fetching genres:", error);
+                console.error("Error fetching genres or user genres:", error);
             }
         };
 
-        fetchGenres();
-    }, []);
-
-    useEffect(() => {
-        const fetchUserGenres = async () => {
-            const docRef = doc(firestore, "users", auth.currentUser.uid);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                setSelectedGenres(docSnap.data().genres || []);
-            } else {
-                setSelectedGenres([]);
-            }
-        };
-        fetchUserGenres();
+        fetchGenresAndUserGenres();
     }, []);
 
     const toggleSelectedGenre = (id, name) => {
@@ -67,6 +62,9 @@ function SettingsView() {
             await updateProfile(auth.currentUser, {
                 displayName: `${firstName} ${lastName}`
             });
+
+            const docRef = doc(firestore, "users", auth.currentUser.uid);
+            await setDoc(docRef, { genres: selectedGenres }, { merge: true });
 
             alert("Changes saved successfully");
             navigate("/");
