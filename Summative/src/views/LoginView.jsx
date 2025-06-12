@@ -4,24 +4,18 @@ import { useStoreContext } from "../context/context.jsx";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../firebase/firebase.jsx";
 
-export function FirstGenreRedirect() {
-    const { genres: selectedGenres } = useStoreContext();
-    const firstGenreId = selectedGenres.keySeq().first();
-    return firstGenreId ? <Navigate to={`genres/${firstGenreId}`} replace /> : <Navigate to="/register" replace />;
-}
-
 function LoginView() {
-    const { setName } = useStoreContext();
-    const [inputEmail, setInputEmail] = useState("");
-    const [inputPassword, setInputPassword] = useState("");
+    const { setUser } = useStoreContext();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const emailLogin = async (e) => {
         e.preventDefault();
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, inputEmail, inputPassword);
-            setName(userCredential.user.displayName || "");
+            const user = (await signInWithEmailAndPassword(auth, email, password)).user;
+            setUser(user);
             navigate("/");
         } catch (error) {
             if (error.code === "auth/wrong-password") {
@@ -32,39 +26,33 @@ function LoginView() {
                 setError("Please enter a valid email address.");
             } else {
                 setError("Login failed. Please try again.");
+                console.error("Login error:", error);
             }
         }
     };
 
-    async function googleSignIn() {
-        // if (selectedGenres.size < 5) {
-        //     alert("Please select at least 5 genres.");
-        //     return;
-        // }
-        // else {
-            const provider = new GoogleAuthProvider();
-            try {
-                const result = await signInWithPopup(auth, provider);
-                setName(result.user.displayName || name);
-                navigate("/");
-            } catch (error) {
-                console.error("Error signing in with Google:", error);
-            }
-        // }
+    async function googleLogin() {
+        try {
+            const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
+            setUser(user);
+            navigate("/");
+        } catch (error) {
+            console.error("Error signing in with Google:", error);
+        }
     }
 
     return (
         <div className="flex justify-center items-center h-screen bg-gradient-to-b from-black to-blue-600">
             <div className="bg-black p-8 rounded-lg shadow-lg w-[400px]">
                 <h1 className="text-2xl font-bold text-center text-blue-700 mb-6">Login</h1>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={emailLogin} className="space-y-4">
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-white">Email</label>
                         <input
                             type="email"
                             id="email"
-                            value={inputEmail}
-                            onChange={(e) => setInputEmail(e.target.value)}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
                             placeholder="Enter your email"
                             required
@@ -75,8 +63,8 @@ function LoginView() {
                         <input
                             type="password"
                             id="password"
-                            value={inputPassword}
-                            onChange={(e) => setInputPassword(e.target.value)}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
                             placeholder="Enter your password"
                             required
@@ -93,7 +81,7 @@ function LoginView() {
                 <div className="flex justify-center mb-4 mt-4">
                     <button
                         type="button"
-                        onClick={() => googleSignIn()}
+                        onClick={() => googleLogin()}
                         className="bg-white text-black px-12 py-2 rounded-md shadow flex items-center cursor-pointer"
                     >
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 mr-2" />

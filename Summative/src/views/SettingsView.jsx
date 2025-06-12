@@ -8,7 +8,7 @@ import { firestore } from "../firebase/firebase.jsx";
 import { updateProfile } from "firebase/auth";
 
 function SettingsView() {
-    const { email, selectedGenres, setSelectedGenres } = useStoreContext();
+    const { selectedGenres, setSelectedGenres } = useStoreContext();
     const navigate = useNavigate();
     const [genres, setGenres] = useState([]);
     const [firstName, setFirstName] = useState(auth.currentUser.displayName.trim().split(" ")[0]);
@@ -24,6 +24,7 @@ function SettingsView() {
                     [28, 12, 16, 80, 10751, 14, 36, 27, 9648, 878, 10752, 37].includes(genre.id)
                 );
                 setGenres(availableGenres);
+                setSelectedGenres(availableGenres || []);
             } catch (error) {
                 console.error("Error fetching genres:", error);
             }
@@ -33,19 +34,19 @@ function SettingsView() {
     }, []);
 
     const toggleSelectedGenre = (id, name) => {
-        if (selectedGenres.has(id)) {
-            setSelectedGenres(selectedGenres.delete(id));
+        if (selectedGenres.some(g => g.id === id)) {
+            setSelectedGenres(selectedGenres.filter(g => g.id !== id));
         } else {
-            setSelectedGenres(selectedGenres.set(id, name));
+            setSelectedGenres([...selectedGenres, { id, name }]);
         }
     };
 
-    const isGenreSelected = (id) => selectedGenres.has(id);
+    const isGenreSelected = (id) => selectedGenres.some(g => g.id === id);
 
     const handleSave = async (e) => {
         e.preventDefault();
 
-        if (selectedGenres.size < 5) {
+        if (selectedGenres.length < 5) {
             alert("Please select at least 5 genres.");
             return;
         }
@@ -58,7 +59,7 @@ function SettingsView() {
             await setDoc(
                 doc(firestore, "users", auth.currentUser.uid),
                 {
-                    genres: Array.from(selectedGenres.entries()).map(([id, name]) => ({ id, name }))
+                    genres: selectedGenres
                 },
                 { merge: true }
             );
@@ -77,7 +78,7 @@ function SettingsView() {
                 <h1 className="text-2xl font-bold text-center text-blue-700 mb-6">Settings</h1>
                 <form onSubmit={handleSave} className="space-y-4">
                     {[
-                        { id: "email", label: "Email", value: email, type: "email", placeholder: "Email", disabled: true, pointerEvents: 'none' },
+                        { id: "email", label: "Email", value: auth.currentUser?.email || "", type: "email", placeholder: "Email", disabled: true, pointerEvents: 'none' },
                         { id: "name", label: "Name", value: firstName, setValue: setFirstName, type: "text", placeholder: "Enter your first name" },
                         { id: "lastName", label: "Last Name", value: lastName, setValue: setLastName, type: "text", placeholder: "Enter your last name" }
                     ].map(({ id, label, value, setValue, type, placeholder, disabled }) => (

@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context/context.jsx";
-import { Map } from "immutable";
 import { useState, useCallback, useRef } from "react";
 import { auth, firestore } from "../firebase/firebase.jsx";
 import { doc, getDoc } from "firebase/firestore";
+import { signOut } from "firebase/auth";
 
 function Header() {
-    const { name, setName, setLastName, setEmail, setPassword, selectedGenres, setSelectedGenres, setCart } = useStoreContext();
+    const { setUser, selectedGenres } = useStoreContext();
     const navigate = useNavigate();
     const [query, setQuery] = useState("");
     const debounceTimer = useRef(null);
@@ -58,13 +58,9 @@ function Header() {
         navigate(`/movies/details/${movieId}`);
     };
 
-    const handleLogout = () => {
-        setName("");
-        setLastName("");
-        setEmail("");
-        setPassword("");
-        setSelectedGenres(Map());
-        setCart([]);
+    const handleLogout = async () => {
+        await signOut(auth);
+        setUser(null);
         navigate("/login");
     };
 
@@ -114,7 +110,12 @@ function Header() {
                         </div>
                         <button
                             className="mb-3 ml-[75px] h-[35px] w-[90px] rounded-lg text-xs font-bold text-white bg-blue-900 cursor-pointer"
-                            onClick={() => navigate(`/movies/genres/${selectedGenres.keys().next().value}`)}
+                            onClick={() => {
+                                if (selectedGenres.length > 0) {
+                                    navigate(`/movies/genres/${selectedGenres[0]?.id}`);
+                                }
+                            }}
+                            disabled={selectedGenres.length === 0}
                         >
                             GENRES
                         </button>

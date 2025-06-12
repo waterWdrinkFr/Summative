@@ -16,14 +16,14 @@ function GenresList({ onGenreSelect }) {
     return (
         <div>
             <div className="flex flex-wrap gap-2">
-                {selectedGenres.size > 0 ? (
-                    selectedGenres.entrySeq().map(([genreId, genreName]) => (
+                {selectedGenres.length > 0 ? (
+                    selectedGenres.map(({ id, name }) => (
                         <button
-                            key={genreId}
-                            onClick={() => handleGenreClick(genreId)}
+                            key={id}
+                            onClick={() => handleGenreClick(id)}
                             className="w-[200px] py-2 mb-2 bg-blue-700 hover:bg-blue-800 text-white rounded-md cursor-pointer"
                         >
-                            {genreName}
+                            {name}
                         </button>
                     ))
                 ) : (
