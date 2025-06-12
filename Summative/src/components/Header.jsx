@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context/context.jsx";
 import { Map } from "immutable";
 import { useState, useCallback, useRef } from "react";
 import { auth, firestore } from "../firebase/firebase.jsx";
+import { doc, getDoc } from "firebase/firestore";
 
 function Header() {
     const { name, setName, setLastName, setEmail, setPassword, selectedGenres, setSelectedGenres, setCart } = useStoreContext();
@@ -10,7 +12,22 @@ function Header() {
     const [query, setQuery] = useState("");
     const debounceTimer = useRef(null);
     const [results, setResults] = useState([]);
-    
+    const [isRegistered, setIsRegistered] = useState(null);
+
+    useEffect(() => {
+        const checkUserID = async () => {
+            const user = auth.currentUser;
+            if (!user) {
+                setIsRegistered(false);
+                return;
+            }
+            const userDocRef = doc(firestore, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            setIsRegistered(userDocSnap.exists());
+        };
+        checkUserID();
+    }, []);
+
     const handleSearchChange = useCallback((e) => {
         const value = e.target.value;
         setQuery(value);
@@ -53,7 +70,7 @@ function Header() {
 
     return (
         <div className="fixed top-0 left-0 w-full h-[120px] bg-gradient-to-b from-black to-transparent z-20">
-            {selectedGenres.size > 0 && (
+            {isRegistered > 0 && (
                 <div className="text-center w-full bg-blue-900 bg-opacity-75">
                     <p className="text-white font-medium">Hello {auth.currentUser.displayName.trim().split(" ")[0]}, welcome to JStreaming!</p>
                 </div>
@@ -65,7 +82,7 @@ function Header() {
                 >
                     JStreaming
                 </button>
-                {selectedGenres.size > 0 ? (
+                {isRegistered ? (
                     <>
                         <div className="relative mb-2.5 ml-[140px]">
                             <input
