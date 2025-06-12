@@ -9,8 +9,8 @@ function SearchView() {
 	const [results, setResults] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
-	const totalPages = useRef(1);
 	const { cart, setCart } = useStoreContext();
+	const totalPages = useRef(1);
 
 	useEffect(() => {
 		if (query) {
