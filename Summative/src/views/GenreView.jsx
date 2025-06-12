@@ -38,13 +38,13 @@ function GenreView() {
     };
 
     const handleAddToCart = (movie) => {
-        const updatedCart = new Map(cart || new Map());
-        updatedCart.set(movie.id.toString(), {
-            id: movie.id,
-            title: movie.title,
-            poster: movie.poster_path,
-        });
-        setCart(updatedCart);
+        if (!cart.some(item => item.id === movie.id)) {
+            setCart([...cart, {
+                id: movie.id,
+                title: movie.title,
+                poster: movie.poster_path,
+            }]);
+        }
     };
 
     const isInCart = (movieId) => {
