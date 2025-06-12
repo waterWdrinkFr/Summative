@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { auth } from "../firebase/firebase.jsx";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase.jsx";
 import { updateProfile } from "firebase/auth";
 
@@ -24,13 +24,25 @@ function SettingsView() {
                     [28, 12, 16, 80, 10751, 14, 36, 27, 9648, 878, 10752, 37].includes(genre.id)
                 );
                 setGenres(availableGenres);
-                setSelectedGenres(availableGenres || []);
             } catch (error) {
                 console.error("Error fetching genres:", error);
             }
         };
 
         fetchGenres();
+    }, []);
+
+    useEffect(() => {
+        const fetchUserGenres = async () => {
+            const docRef = doc(firestore, "users", auth.currentUser.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                setSelectedGenres(docSnap.data().genres || []);
+            } else {
+                setSelectedGenres([]);
+            }
+        };
+        fetchUserGenres();
     }, []);
 
     const toggleSelectedGenre = (id, name) => {
@@ -55,14 +67,6 @@ function SettingsView() {
             await updateProfile(auth.currentUser, {
                 displayName: `${firstName} ${lastName}`
             });
-
-            await setDoc(
-                doc(firestore, "users", auth.currentUser.uid),
-                {
-                    genres: selectedGenres
-                },
-                { merge: true }
-            );
 
             alert("Changes saved successfully");
             navigate("/");
