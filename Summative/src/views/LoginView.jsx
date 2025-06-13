@@ -18,7 +18,7 @@ function LoginView() {
             setUser(user);
             navigate("/");
         } catch (error) {
-            if (error.code === "auth/wrong-password") {
+            if (error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
                 setError("Incorrect password.");
             } else if (error.code === "auth/user-not-found") {
                 setError("No account found with this email.");
