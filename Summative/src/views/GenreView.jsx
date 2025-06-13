@@ -53,7 +53,7 @@ function GenreView() {
 
     return (
         <div className="mt-[120px]">
-            <div className="ml-[70px] grid grid-cols-5 gap-4">
+            <div className="ml-[70px] grid grid-cols-4 gap-4">
                 {movies.map((movie) => (
                     <div key={movie.id} className="bg-gray-800 text-white p-4 rounded-lg shadow-md">
                         <Link to={`/movies/details/${movie.id}`}>
@@ -85,10 +85,11 @@ function GenreView() {
             <button
                 onClick={() => handlePageChange(-1)}
                 disabled={page === 1 || loading}
-                className="mt-4 ml-96 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+                className="mt-4 ml-78 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
             >
                 Previous
             </button>
+            <span className="ml-4 text-white">Page {page} of {totalPages.current}</span>
             <button
                 onClick={() => handlePageChange(1)}
                 disabled={page === totalPages.current || loading}
@@ -96,7 +97,6 @@ function GenreView() {
             >
                 Next
             </button>
-            <span className="ml-46 text-white">Page {page} of {totalPages.current}</span>
         </div>
     );
 }

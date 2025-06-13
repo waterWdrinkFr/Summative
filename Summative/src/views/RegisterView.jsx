@@ -5,7 +5,6 @@ import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleA
 import { auth, firestore } from "../firebase/firebase.jsx";
 import { doc, setDoc } from "firebase/firestore";
 import axios from "axios";
-import { set } from "immutable";
 
 function RegisterView() {
     const { setUser, selectedGenres, setSelectedGenres } = useStoreContext();
