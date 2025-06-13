@@ -18,6 +18,7 @@ function RegisterView() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        setSelectedGenres([]);
         const fetchGenres = async () => {
             try {
                 const { data } = await axios.get(
