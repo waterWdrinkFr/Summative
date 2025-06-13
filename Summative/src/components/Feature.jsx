@@ -27,7 +27,7 @@ function Feature() {
 
     return (
         <div className="p-15">
-            <h2 className="text-2xl font-bold text-center text-white mt-[9%]">Now Playing</h2>
+            <h2 className="text-2xl font-bold text-center text-white mt-[12%]">Now Playing</h2>
             <div className="mt-12 flex flex-wrap justify-center gap-18">
                 {movies.map((movie) => (
                     <Link to={`/movies/details/${movie.id}`} key={movie.id}>

@@ -104,7 +104,7 @@ function SettingsView() {
     );
 
     return (
-        <div className="flex justify-center items-center h-screen bg-gradient-to-b from-black to-blue-600">
+        <div className="mt-0 flex justify-center items-center h-screen bg-gradient-to-b from-black to-blue-600">
             <div className="bg-black px-12 py-6 rounded-lg shadow-lg w-[600px]">
                 <h1 className="text-2xl font-bold text-center text-blue-700 mb-6">Settings</h1>
                 <form onSubmit={handleSave} className="space-y-4">
@@ -128,18 +128,23 @@ function SettingsView() {
                     ))}
 
                     {isEmailUser && (
-                        <div className="mb-4">
+                        <div className="relative mb-4">
                             <button
                                 type="button"
                                 onClick={() => setShowPasswordFields((prev) => !prev)}
-                                className="mb-2 w-full text-left bg-blue-800 text-white px-4 py-2 rounded-md font-semibold focus:outline-none"
+                                className="mb-2 w-full text-left bg-blue-800 text-white px-4 py-2 rounded-md font-semibold cursor-pointer z-10"
                             >
                                 {showPasswordFields ? "Cancel ▲" : "Change Password ▼"}
                             </button>
                             {showPasswordFields && (
-                                <>
+                                <div
+                                    className="absolute top-8 left-0 w-full bg-blue-800 p-4 rounded-md shadow-lg z-50"
+                                    style={{ position: "absolute" }}
+                                >
                                     <div>
-                                        <label htmlFor="current-password" className="block text-base font-medium text-white">Current Password</label>
+                                        <label htmlFor="current-password" className="block text-base font-medium text-white">
+                                            Current Password
+                                        </label>
                                         <input
                                             id="current-password"
                                             type="password"
@@ -151,7 +156,9 @@ function SettingsView() {
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="new-password" className="block text-base font-medium text-white">New Password</label>
+                                        <label htmlFor="new-password" className="block text-base font-medium text-white">
+                                            New Password
+                                        </label>
                                         <input
                                             id="new-password"
                                             type="password"
@@ -162,7 +169,9 @@ function SettingsView() {
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="confirm-password" className="block text-base font-medium text-white">Confirm New Password</label>
+                                        <label htmlFor="confirm-password" className="block text-base font-medium text-white">
+                                            Confirm New Password
+                                        </label>
                                         <input
                                             id="confirm-password"
                                             type="password"
@@ -172,7 +181,7 @@ function SettingsView() {
                                             className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
                                         />
                                     </div>
-                                </>
+                                </div>
                             )}
                         </div>
                     )}
@@ -189,7 +198,11 @@ function SettingsView() {
                                             onChange={() => toggleSelectedGenre(id, name)}
                                             className="mr-2"
                                         />
-                                        <span className={`text-xl font-bold cursor-pointer whitespace-nowrap ${isGenreSelected(id) ? "text-sky-600" : "text-white"}`}>
+                                        <span
+                                            className={`text-xl font-bold cursor-pointer whitespace-nowrap ${
+                                                isGenreSelected(id) ? "text-sky-600" : "text-white"
+                                            }`}
+                                        >
                                             {name}
                                         </span>
                                     </label>
