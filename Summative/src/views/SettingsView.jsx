@@ -5,7 +5,7 @@ import axios from "axios";
 import { auth } from "../firebase/firebase.jsx";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase.jsx";
-import { updateProfile } from "firebase/auth";
+import { updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 
 function SettingsView() {
     const { selectedGenres, setSelectedGenres } = useStoreContext();
@@ -13,6 +13,10 @@ function SettingsView() {
     const [genres, setGenres] = useState([]);
     const [firstName, setFirstName] = useState(auth.currentUser.displayName.trim().split(" ")[0]);
     const [lastName, setLastName] = useState(auth.currentUser.displayName.trim().split(" ")[1]);
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPasswordFields, setShowPasswordFields] = useState(false);
 
     useEffect(() => {
         const fetchGenresAndUserGenres = async () => {
@@ -59,10 +63,31 @@ function SettingsView() {
         }
 
         try {
+            if (isEmailUser && newPassword) {
+                if (newPassword !== confirmPassword) {
+                    alert("Passwords do not match.");
+                    return;
+                }
+                try {
+                    const credential = EmailAuthProvider.credential(
+                        auth.currentUser.email,
+                        currentPassword
+                    );
+                    await reauthenticateWithCredential(auth.currentUser, credential);
+                    await updatePassword(auth.currentUser, newPassword);
+                } catch (error) {
+                    if (error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
+                        alert("Current password is incorrect.");
+                    } else {
+                        alert("Failed to update password.");
+                        console.error("Error updating password:", error);
+                    }
+                    return;
+                }
+            }
             await updateProfile(auth.currentUser, {
                 displayName: `${firstName} ${lastName}`
             });
-
             const docRef = doc(firestore, "users", auth.currentUser.uid);
             await setDoc(docRef, { genres: selectedGenres }, { merge: true });
 
@@ -73,6 +98,10 @@ function SettingsView() {
             console.error("Error updating profile:", error);
         }
     };
+
+    const isEmailUser = auth.currentUser.providerData.some(
+        (provider) => provider.providerId === "password"
+    );
 
     return (
         <div className="flex justify-center items-center h-screen bg-gradient-to-b from-black to-blue-600">
@@ -93,11 +122,60 @@ function SettingsView() {
                                 onChange={(e) => setValue && setValue(e.target.value)}
                                 placeholder={placeholder}
                                 disabled={disabled}
-                                required
                                 className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
                             />
                         </div>
                     ))}
+
+                    {isEmailUser && (
+                        <div className="mb-4">
+                            <button
+                                type="button"
+                                onClick={() => setShowPasswordFields((prev) => !prev)}
+                                className="mb-2 w-full text-left bg-blue-800 text-white px-4 py-2 rounded-md font-semibold focus:outline-none"
+                            >
+                                {showPasswordFields ? "Cancel ▲" : "Change Password ▼"}
+                            </button>
+                            {showPasswordFields && (
+                                <>
+                                    <div>
+                                        <label htmlFor="current-password" className="block text-base font-medium text-white">Current Password</label>
+                                        <input
+                                            id="current-password"
+                                            type="password"
+                                            value={currentPassword}
+                                            onChange={(e) => setCurrentPassword(e.target.value)}
+                                            placeholder="Enter current password"
+                                            className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="new-password" className="block text-base font-medium text-white">New Password</label>
+                                        <input
+                                            id="new-password"
+                                            type="password"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                            placeholder="Enter new password"
+                                            className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="confirm-password" className="block text-base font-medium text-white">Confirm New Password</label>
+                                        <input
+                                            id="confirm-password"
+                                            type="password"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            placeholder="Confirm new password"
+                                            className="mt-1 block w-full px-4 py-2 rounded-md bg-white"
+                                        />
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    )}
 
                     <div>
                         <h2 className="text-base font-medium text-white mt-4 mb-4">Selected Genres</h2>
