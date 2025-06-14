@@ -132,13 +132,13 @@ function SettingsView() {
                             <button
                                 type="button"
                                 onClick={() => setShowPasswordFields((prev) => !prev)}
-                                className="mb-2 w-full text-left bg-blue-800 text-white px-4 py-2 rounded-md cursor-pointer"
+                                className="mb-2 w-full text-left bg-gray-700 text-white px-4 py-2 rounded-md cursor-pointer"
                             >
                                 {showPasswordFields ? "Save ▲" : "Change Password ▼"}
                             </button>
                             {showPasswordFields && (
                                 <div
-                                    className="absolute top-8 left-0 w-full bg-blue-800 p-4 rounded-md shadow-lg z-50"
+                                    className="absolute top-7.5 left-0 w-full bg-gray-700 p-4 rounded-md z-50"
                                     style={{ position: "absolute" }}
                                 >
                                     <div>

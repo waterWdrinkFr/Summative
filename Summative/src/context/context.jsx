@@ -11,6 +11,7 @@ export const StoreProvider = ({ children }) => {
     const [selectedGenres, setSelectedGenres] = useState([]);
     const [cart, setCart] = useState(Map());
     const [purchases, setPurchases] = useState(Map());
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         onAuthStateChanged(auth, async (user) => {
@@ -19,18 +20,14 @@ export const StoreProvider = ({ children }) => {
                 const sessionCart = localStorage.getItem(user.uid);
                 if (sessionCart) {
                     setCart(Map(JSON.parse(sessionCart)));
-                } else {
-                    setCart(Map());
                 }
 
                 const docRef = doc(firestore, "users", user.uid);
                 try {
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        const fetchedGenres = docSnap.data().genres;
-                        setSelectedGenres(fetchedGenres);
-                        const fetchedPurchases = Map(docSnap.data().purchases);
-                        setPurchases(fetchedPurchases);
+                    if (await getDoc(docRef).exists()) {
+                        const data = docSnap.data();
+                        setSelectedGenres(data.genres);
+                        setPurchases(Map(data.purchases));
                     } else {
                         setSelectedGenres([]);
                         setPurchases(Map());
@@ -39,8 +36,17 @@ export const StoreProvider = ({ children }) => {
                     console.log("Error fetching genres:", error);
                 }
             }
+            setLoading(false);
         });
     }, []);
+
+    if (loading) {
+        return (
+            <div>
+                <h1 className="loading-title">Loading...</h1>
+            </div>
+        )
+    }
 
     return (
         <StoreContext.Provider value={{ user, setUser, selectedGenres, setSelectedGenres, cart, setCart, purchases, setPurchases }}>
