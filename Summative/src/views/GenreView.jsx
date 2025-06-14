@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useStoreContext } from "../context/context.jsx";
 import axios from "axios";
-import { Map } from "immutable";
 
 function GenreView() {
     const { genre_id } = useParams();

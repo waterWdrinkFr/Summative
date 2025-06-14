@@ -1,5 +1,5 @@
 import { useStoreContext } from "../context/context.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { auth } from "../firebase/firebase.jsx";
@@ -8,7 +8,7 @@ import { firestore } from "../firebase/firebase.jsx";
 import { updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 
 function SettingsView() {
-    const { selectedGenres, setSelectedGenres } = useStoreContext();
+    const { selectedGenres, setSelectedGenres, purchases } = useStoreContext();
     const navigate = useNavigate();
     const [genres, setGenres] = useState([]);
     const [firstName, setFirstName] = useState(auth.currentUser.displayName.trim().split(" ")[0]);
@@ -17,7 +17,7 @@ function SettingsView() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPasswordFields, setShowPasswordFields] = useState(false);
-    const [purchaseList, setPurchaseList] = useState([]);
+    const purchaseList = purchases ? purchases.toArray() : [];
 
     useEffect(() => {
         const fetchGenresAndUserGenres = async () => {
@@ -58,6 +58,7 @@ function SettingsView() {
 
         fetchGenresAndUserGenres();
         fetchPurchaseHistory();
+        console.log("purchaseList", purchaseList, purchaseList.length);
     }, []);
 
     const toggleSelectedGenre = (id, name) => {
@@ -204,7 +205,7 @@ function SettingsView() {
 
                     <div>
                         <h2 className="text-xl font-bold text-white mt-4 mb-4">Selected Genres</h2>
-                        <ul className="grid grid-cols-2 gap-4">
+                        <ul className="grid grid-cols-3 gap-x-12 gap-y-2">
                             {genres.map(({ id, name }) => (
                                 <li key={id}>
                                     <label className="flex items-center">
@@ -215,9 +216,8 @@ function SettingsView() {
                                             className="mr-2"
                                         />
                                         <span
-                                            className={`text-md font-bold cursor-pointer whitespace-nowrap ${
-                                                isGenreSelected(id) ? "text-sky-600" : "text-white"
-                                            }`}
+                                            className={`text-md font-bold cursor-pointer whitespace-nowrap ${isGenreSelected(id) ? "text-sky-600" : "text-white"
+                                                }`}
                                         >
                                             {name}
                                         </span>
@@ -234,22 +234,19 @@ function SettingsView() {
 
                 <div className="mt-8">
                     <h2 className="text-xl font-bold text-white mb-4">Purchase History</h2>
-                    {purchaseList.length === 0 ? (
-                        <p className="text-white">No purchases yet.</p>
-                    ) : (
-                        <ul className="space-y-4">
+                    <div className="w-full overflow-x-auto">
+                        <ul className="flex space-x-4">
                             {purchaseList.map(([id, movie]) => (
-                                <li key={id} className="bg-gray-800 text-white p-4 rounded-lg shadow-md flex items-center">
+                                <li key={id} className="mb-2 bg-gray-800 text-white p-2 rounded-lg shadow-md flex-shrink-0 w-25">
                                     <img
-                                        src={`https://image.tmdb.org/t/p/w92${movie.poster}`}
+                                        src={`https://image.tmdb.org/t/p/w154${movie.poster}`}
                                         alt={movie.title}
-                                        className="w-16 h-24 object-cover rounded mr-4"
+                                        className="h-35 object-cover rounded mb-2"
                                     />
-                                    <span className="font-semibold">{movie.title}</span>
                                 </li>
                             ))}
                         </ul>
-                    )}
+                    </div>
                 </div>
             </div>
         </div>
