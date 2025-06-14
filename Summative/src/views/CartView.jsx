@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import { set } from "immutable";
 
 function CartView() {
-    const { cart, setCart } = useStoreContext();
+    const { user, cart, setCart } = useStoreContext();
     const [movies, setMovies] = useState([]);
 
     useEffect(() => {
@@ -33,11 +33,14 @@ function CartView() {
     const handleRemoveFromCart = (id) => {
         const updatedCart = new Map(cart);
         updatedCart.delete(id.toString());
+        localStorage.setItem(user.uid, JSON.stringify(updatedCart.toJS()));
         setCart(updatedCart);
     }
 
     const handleCheckout = () => {
-        setCart(new Map());
+        const clearedCart = cart.clear();
+        localStorage.setItem(user.uid, JSON.stringify(clearedCart.toJS()));
+        setCart(clearedCart);
         alert("Thank you for your purchase!");
     }   
 

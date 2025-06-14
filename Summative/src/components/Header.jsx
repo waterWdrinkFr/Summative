@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useStoreContext } from "../context/context.jsx";
 import { useState, useCallback, useRef } from "react";
 import { auth, firestore } from "../firebase/firebase.jsx";
-import { doc, getDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 
 function Header() {
