@@ -20,6 +20,8 @@ export const StoreProvider = ({ children }) => {
                 const sessionCart = localStorage.getItem(user.uid);
                 if (sessionCart) {
                     setCart(Map(JSON.parse(sessionCart)));
+                } else {
+                    setCart(Map());
                 }
 
                 const docRef = doc(firestore, "users", user.uid);

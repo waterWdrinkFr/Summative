@@ -11,6 +11,7 @@ function CartView() {
     const [movies, setMovies] = useState([]);
 
     useEffect(() => {
+        if (!cart || typeof cart.size !== "number") return; // Guard for undefined
         const fetchMovies = async () => {
             try {
                 const moviePromises = Array.from(cart.keys()).map((id) =>
@@ -32,10 +33,10 @@ function CartView() {
     }, [cart]);
 
     const handleRemoveFromCart = (id) => {
-        const updatedCart = new Map(cart);
-        updatedCart.delete(id.toString());
-        localStorage.setItem(user.uid, JSON.stringify(updatedCart.toJS()));
+        // Use Immutable.js methods, not native Map
+        const updatedCart = cart.delete(id.toString());
         setCart(updatedCart);
+        localStorage.setItem(user.uid, JSON.stringify(updatedCart.toJS()));
     }
 
     const handleCheckout = async () => {

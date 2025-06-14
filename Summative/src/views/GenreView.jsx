@@ -45,7 +45,7 @@ function GenreView() {
             }
         );
         setCart(updatedCart);
-        localStorage.setItem(user.uid, JSON.stringify(cart.toJS()));
+        localStorage.setItem(user.uid, JSON.stringify(updatedCart.toJS()));
     };
 
     const isInCart = (movieId) => cart.has(movieId.toString());
