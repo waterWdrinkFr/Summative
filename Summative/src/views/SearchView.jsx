@@ -3,14 +3,13 @@ import { useParams, Link } from "react-router-dom";
 import { useStoreContext } from "../context/context.jsx";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Map } from "immutable";
 
 function SearchView() {
 	const { query } = useParams();
 	const [results, setResults] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
-	const { user, cart, setCart } = useStoreContext();
+	const { user, cart, setCart, purchases } = useStoreContext();
 	const totalPages = useRef(1);
 
 	useEffect(() => {
@@ -57,9 +56,8 @@ function SearchView() {
 		localStorage.setItem(user.uid, JSON.stringify(cart.toJS()));
 	};
 
-	const isInCart = (movieId) => {
-		return cart instanceof Map && cart.has(movieId.toString());
-	};
+	const isInCart = (movieId) => cart.has(movieId.toString());
+	const isPurchased = (movieId) => purchases.has(movieId.toString());
 
 	return (
 		<>
@@ -85,13 +83,19 @@ function SearchView() {
 								</Link>
 								<button
 									onClick={() => handleAddToCart(movie)}
-									disabled={isInCart(movie.id)}
-									className={`w-full mt-2 px-6 py-2 text-base font-bold rounded-lg ${isInCart(movie.id)
-										? "bg-gray-500 cursor-not-allowed"
-										: "bg-blue-700 hover:bg-blue-800 cursor-pointer"
+									disabled={isInCart(movie.id) || isPurchased(movie.id)}
+									className={`w-full mt-2 px-6 py-2 text-sm font-bold rounded-lg ${isPurchased(movie.id)
+										? "bg-green-700 cursor-not-allowed"
+										: isInCart(movie.id)
+											? "bg-gray-500 cursor-not-allowed"
+											: "bg-blue-700 hover:bg-blue-800 cursor-pointer"
 										}`}
 								>
-									{isInCart(movie.id) ? "Added" : "Buy"}
+									{isPurchased(movie.id)
+										? "Purchased"
+										: isInCart(movie.id)
+											? "Added"
+											: "Buy"}
 								</button>
 							</div>
 						))}

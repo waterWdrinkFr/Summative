@@ -7,8 +7,8 @@ import { Map } from "immutable";
 function GenreView() {
     const { genre_id } = useParams();
     const [movies, setMovies] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const { user, cart, setCart } = useStoreContext();
+    const [loading] = useState(false);
+    const { user, cart, setCart, purchases } = useStoreContext();
     const [page, setPage] = useState(1);
     const totalPages = useRef(1);
 
@@ -48,9 +48,8 @@ function GenreView() {
         localStorage.setItem(user.uid, JSON.stringify(cart.toJS()));
     };
 
-    const isInCart = (movieId) => {
-        return cart instanceof Map && cart.has(movieId.toString());
-    };
+    const isInCart = (movieId) => cart.has(movieId.toString());
+    const isPurchased = (movieId) => purchases.has(movieId.toString());
 
     return (
         <div className="mt-[120px]">
@@ -72,13 +71,19 @@ function GenreView() {
                         </Link>
                         <button
                             onClick={() => handleAddToCart(movie)}
-                            disabled={isInCart(movie.id)}
-                            className={`w-full mt-2 px-6 py-2 text-sm font-bold rounded-lg ${isInCart(movie.id)
-                                ? "bg-gray-500 cursor-not-allowed"
-                                : "bg-blue-700 hover:bg-blue-800 cursor-pointer"
+                            disabled={isInCart(movie.id) || isPurchased(movie.id)}
+                            className={`w-full mt-2 px-6 py-2 text-sm font-bold rounded-lg ${isPurchased(movie.id)
+                                    ? "bg-green-700 cursor-not-allowed"
+                                    : isInCart(movie.id)
+                                        ? "bg-gray-500 cursor-not-allowed"
+                                        : "bg-blue-700 hover:bg-blue-800 cursor-pointer"
                                 }`}
                         >
-                            {isInCart(movie.id) ? "Added" : "Buy"}
+                            {isPurchased(movie.id)
+                                ? "Purchased"
+                                : isInCart(movie.id)
+                                    ? "Added"
+                                    : "Buy"}
                         </button>
                     </div>
                 ))}

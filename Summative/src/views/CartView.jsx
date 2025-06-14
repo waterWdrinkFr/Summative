@@ -1,12 +1,13 @@
 import { useStoreContext } from "../context/context.jsx";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { doc, updateDoc } from "firebase/firestore";
+import { firestore } from "../firebase/firebase.jsx";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { set } from "immutable";
 
 function CartView() {
-    const { user, cart, setCart } = useStoreContext();
+    const { user, cart, setCart, purchases, setPurchases } = useStoreContext();
     const [movies, setMovies] = useState([]);
 
     useEffect(() => {
@@ -37,12 +38,21 @@ function CartView() {
         setCart(updatedCart);
     }
 
-    const handleCheckout = () => {
-        const clearedCart = cart.clear();
-        localStorage.setItem(user.uid, JSON.stringify(clearedCart.toJS()));
-        setCart(clearedCart);
+    const handleCheckout = async () => {
+        const updatedPurchases = purchases.merge(cart);
+        setPurchases(updatedPurchases);
+
+        try {
+            const docRef = doc(firestore, "users", user.uid);
+            await updateDoc(docRef, { purchases: updatedPurchases.toJS() });
+            const clearedCart = cart.clear();
+            setCart(clearedCart);
+            localStorage.setItem(user.uid, JSON.stringify(clearedCart.toJS()));
+        } catch (error) {
+            alert(error);
+        }
         alert("Thank you for your purchase!");
-    }   
+    }
 
     return (
         <>
@@ -77,7 +87,7 @@ function CartView() {
                             ))}
                         </div>
                         <div className="flex justify-end mt-6">
-                            <button 
+                            <button
                                 onClick={handleCheckout}
                                 className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded">
                                 Checkout
