@@ -17,6 +17,7 @@ function SettingsView() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPasswordFields, setShowPasswordFields] = useState(false);
+    const [purchaseList, setPurchaseList] = useState([]);
 
     useEffect(() => {
         const fetchGenresAndUserGenres = async () => {
@@ -41,7 +42,22 @@ function SettingsView() {
             }
         };
 
+        const fetchPurchaseHistory = async () => {
+            try {
+                const docRef = doc(firestore, "users", auth.currentUser.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().purchaseHistory) {
+                    setPurchaseList(docSnap.data().purchaseHistory);
+                } else {
+                    setPurchaseList([]);
+                }
+            } catch (error) {
+                console.error("Error fetching purchase history:", error);
+            }
+        };
+
         fetchGenresAndUserGenres();
+        fetchPurchaseHistory();
     }, []);
 
     const toggleSelectedGenre = (id, name) => {
@@ -114,7 +130,7 @@ function SettingsView() {
                         { id: "lastName", label: "Last Name", value: lastName, setValue: setLastName, type: "text", placeholder: "Enter your last name" }
                     ].map(({ id, label, value, setValue, type, placeholder, disabled }) => (
                         <div key={id}>
-                            <label htmlFor={id} className="block text-base font-medium text-white">{label}</label>
+                            <label htmlFor={id} className="block text-md font-bold text-white">{label}</label>
                             <input
                                 id={id}
                                 type={type}
@@ -187,7 +203,7 @@ function SettingsView() {
                     )}
 
                     <div>
-                        <h2 className="text-base font-medium text-white mt-4 mb-4">Selected Genres</h2>
+                        <h2 className="text-xl font-bold text-white mt-4 mb-4">Selected Genres</h2>
                         <ul className="grid grid-cols-2 gap-4">
                             {genres.map(({ id, name }) => (
                                 <li key={id}>
@@ -199,7 +215,7 @@ function SettingsView() {
                                             className="mr-2"
                                         />
                                         <span
-                                            className={`text-xl font-bold cursor-pointer whitespace-nowrap ${
+                                            className={`text-md font-bold cursor-pointer whitespace-nowrap ${
                                                 isGenreSelected(id) ? "text-sky-600" : "text-white"
                                             }`}
                                         >
@@ -215,6 +231,26 @@ function SettingsView() {
                     </button>
 
                 </form>
+
+                <div className="mt-8">
+                    <h2 className="text-xl font-bold text-white mb-4">Purchase History</h2>
+                    {purchaseList.length === 0 ? (
+                        <p className="text-white">No purchases yet.</p>
+                    ) : (
+                        <ul className="space-y-4">
+                            {purchaseList.map(([id, movie]) => (
+                                <li key={id} className="bg-gray-800 text-white p-4 rounded-lg shadow-md flex items-center">
+                                    <img
+                                        src={`https://image.tmdb.org/t/p/w92${movie.poster}`}
+                                        alt={movie.title}
+                                        className="w-16 h-24 object-cover rounded mr-4"
+                                    />
+                                    <span className="font-semibold">{movie.title}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
             </div>
         </div>
     );

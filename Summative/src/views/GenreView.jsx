@@ -73,7 +73,7 @@ function GenreView() {
                             onClick={() => handleAddToCart(movie)}
                             disabled={isInCart(movie.id) || isPurchased(movie.id)}
                             className={`w-full mt-2 px-6 py-2 text-sm font-bold rounded-lg ${isPurchased(movie.id)
-                                    ? "bg-green-700 cursor-not-allowed"
+                                    ? "bg-gray-500 cursor-not-allowed"
                                     : isInCart(movie.id)
                                         ? "bg-gray-500 cursor-not-allowed"
                                         : "bg-blue-700 hover:bg-blue-800 cursor-pointer"

@@ -2,7 +2,7 @@ import { createContext, useState, useContext, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, firestore } from "../firebase/firebase.jsx";
-import { Map } from 'immutable';
+import { Map } from "immutable";
 
 const StoreContext = createContext();
 
@@ -23,18 +23,18 @@ export const StoreProvider = ({ children }) => {
                 }
 
                 const docRef = doc(firestore, "users", user.uid);
-                try {
-                    if (await getDoc(docRef).exists()) {
-                        const data = docSnap.data();
-                        setSelectedGenres(data.genres);
-                        setPurchases(Map(data.purchases));
-                    } else {
-                        setSelectedGenres([]);
-                        setPurchases(Map());
-                    }
-                } catch (error) {
-                    console.log("Error fetching genres:", error);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setSelectedGenres(data.genres || []);
+                    setPurchases(Map(data.purchases));
+                } else {
+                    setSelectedGenres([]);
+                    setPurchases(Map());
                 }
+            } else {
+                setSelectedGenres([]);
+                setPurchases(Map());
             }
             setLoading(false);
         });

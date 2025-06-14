@@ -5,7 +5,7 @@ import { useStoreContext } from "../context/context.jsx";
 
 function DetailView() {
     const [movies, setMovies] = useState(null);
-    const { cart, setCart } = useStoreContext();
+    const { cart, setCart, purchases } = useStoreContext();
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -32,6 +32,9 @@ function DetailView() {
         });
         setCart(updatedCart);
     };
+
+    const isInCart = (movieId) => cart.has(movieId.toString());
+    const isPurchased = (movieId) => purchases.has(movieId.toString());
 
     if (!movies) {
         return <div className="text-center mt-4">Loading...</div>;
@@ -64,13 +67,17 @@ function DetailView() {
             <div className="mt-6 mb-4">
                 <button
                     onClick={() => handleAddToCart(movies)}
-                    disabled={cart?.has(movies.id.toString())}
-                    className={`w-[175px] mt-2 px-6 py-2 text-base font-bold rounded-lg ${cart?.has?.(movies.id.toString())
+                    disabled={isInCart(movies.id) || isPurchased(movies.id)}
+                    className={`w-[175px] mt-2 px-6 py-2 text-base font-bold rounded-lg ${isInCart(movies.id) || isPurchased(movies.id)
                         ? "bg-gray-500 cursor-not-allowed"
                         : "bg-blue-700 hover:bg-blue-800 cursor-pointer"
                         }`}
                 >
-                    {cart?.has(movies.id.toString()) ? "Added to Cart" : "Buy - $$$"}
+                    {isPurchased(movies.id)
+                        ? "Purchased"
+                        : isInCart(movies.id)
+                            ? "Added to Cart"
+                            : "Buy - $$$"}
                 </button>
             </div>
 
