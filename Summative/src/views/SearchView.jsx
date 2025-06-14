@@ -3,13 +3,14 @@ import { useParams, Link } from "react-router-dom";
 import { useStoreContext } from "../context/context.jsx";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { Map } from "immutable";
 
 function SearchView() {
 	const { query } = useParams();
 	const [results, setResults] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
-	const { cart, setCart } = useStoreContext();
+	const { user, cart, setCart } = useStoreContext();
 	const totalPages = useRef(1);
 
 	useEffect(() => {
@@ -44,13 +45,16 @@ function SearchView() {
 	};
 
 	const handleAddToCart = (movie) => {
-		const updatedCart = new Map(cart || new Map());
-		updatedCart.set(movie.id.toString(), {
-			id: movie.id,
-			title: movie.title,
-			poster: movie.poster_path,
-		});
+		const updatedCart = cart.set(
+			movie.id.toString(),
+			{
+				id: movie.id,
+				title: movie.title,
+				poster: movie.poster_path,
+			}
+		);
 		setCart(updatedCart);
+		localStorage.setItem(user.uid, JSON.stringify(cart.toJS()));
 	};
 
 	const isInCart = (movieId) => {

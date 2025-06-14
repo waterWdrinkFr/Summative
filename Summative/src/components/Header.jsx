@@ -7,26 +7,11 @@ import { doc, getDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 
 function Header() {
-    const { setUser, selectedGenres } = useStoreContext();
+    const { user, setUser, selectedGenres, setCart } = useStoreContext();
     const navigate = useNavigate();
     const [query, setQuery] = useState("");
     const debounceTimer = useRef(null);
     const [results, setResults] = useState([]);
-    const [isRegistered, setIsRegistered] = useState(null);
-
-    useEffect(() => {
-        const checkUserID = async () => {
-            const user = auth.currentUser;
-            if (!user) {
-                setIsRegistered(false);
-                return;
-            }
-            const userDocRef = doc(firestore, "users", user.uid);
-            const userDocSnap = await getDoc(userDocRef);
-            setIsRegistered(userDocSnap.exists());
-        };
-        checkUserID();
-    }, []);
 
     const handleSearchChange = useCallback((e) => {
         const value = e.target.value;
@@ -61,26 +46,27 @@ function Header() {
     const handleLogout = async () => {
         await signOut(auth);
         setUser(null);
+        setCart(new Map());
         navigate("/login");
     };
 
     return (
-        <div className="fixed top-0 left-0 w-full h-[120px] bg-gradient-to-b from-black to-transparent z-20">
-            {isRegistered && auth.currentUser && auth.currentUser.displayName && (
-                <div className="text-center w-full bg-blue-900 bg-opacity-75">
+        <div className="fixed top-0 left-0 w-full bg-gradient-to-b from-black to-transparent z-20">
+            {user && (
+                <div className="w-full bg-blue-900 bg-opacity-75 text-center py-2 z-100">
                     <p className="text-white font-medium">
                         Hello {auth.currentUser.displayName.trim().split(" ")[0]}, welcome to JStreaming!
                     </p>
                 </div>
             )}
-            <div className="flex items-center h-full">
+            <div className="flex items-center h-[120px]">
                 <button
                     className="mb-5 ml-5 w-[200px] p-1 rounded-lg text-3xl font-bold text-white bg-blue-900 cursor-pointer"
                     onClick={() => navigate("/")}
                 >
                     JStreaming
                 </button>
-                {isRegistered ? (
+                {user ? (
                     <>
                         <div className="relative mb-2.5 ml-[140px]">
                             <input
@@ -93,7 +79,6 @@ function Header() {
                                         navigate(`/movies/search/${encodeURIComponent(query.trim())}`);
                                         setResults([]);
                                     }
-
                                 }}
                             />
                             {results.length > 0 && (

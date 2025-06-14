@@ -132,9 +132,9 @@ function SettingsView() {
                             <button
                                 type="button"
                                 onClick={() => setShowPasswordFields((prev) => !prev)}
-                                className="mb-2 w-full text-left bg-blue-800 text-white px-4 py-2 rounded-md font-semibold cursor-pointer z-10"
+                                className="mb-2 w-full text-left bg-blue-800 text-white px-4 py-2 rounded-md cursor-pointer"
                             >
-                                {showPasswordFields ? "Cancel ▲" : "Change Password ▼"}
+                                {showPasswordFields ? "Save ▲" : "Change Password ▼"}
                             </button>
                             {showPasswordFields && (
                                 <div
@@ -211,7 +211,7 @@ function SettingsView() {
                         </ul>
                     </div>
                     <button type="submit" className="w-full bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer">
-                        Save
+                        Save Changes
                     </button>
 
                 </form>

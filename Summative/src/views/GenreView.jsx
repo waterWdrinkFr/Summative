@@ -2,18 +2,18 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useStoreContext } from "../context/context.jsx";
 import axios from "axios";
+import { Map } from "immutable";
 
 function GenreView() {
     const { genre_id } = useParams();
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { cart, setCart } = useStoreContext();
+    const { user, cart, setCart } = useStoreContext();
     const [page, setPage] = useState(1);
     const totalPages = useRef(1);
 
     useEffect(() => {
         async function fetchMovies() {
-            setLoading(true);
             try {
                 const response = await axios.get(
                     `https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_TMDB_KEY}&with_genres=${genre_id}&page=${page}&include_adult=false`
@@ -23,8 +23,6 @@ function GenreView() {
             } catch (error) {
                 console.error("Failed to fetch movies:", error);
                 setMovies([]);
-            } finally {
-                setLoading(false);
             }
         }
         fetchMovies();
@@ -38,13 +36,16 @@ function GenreView() {
     };
 
     const handleAddToCart = (movie) => {
-        const updatedCart = new Map(cart || new Map());
-        updatedCart.set(movie.id.toString(), {
-            id: movie.id,
-            title: movie.title,
-            poster: movie.poster_path,
-        });
+        const updatedCart = cart.set(
+            movie.id.toString(),
+            {
+                id: movie.id,
+                title: movie.title,
+                poster: movie.poster_path,
+            }
+        );
         setCart(updatedCart);
+        localStorage.setItem(user.uid, JSON.stringify(cart.toJS()));
     };
 
     const isInCart = (movieId) => {
