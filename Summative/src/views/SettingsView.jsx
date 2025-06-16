@@ -80,28 +80,6 @@ function SettingsView() {
         }
 
         try {
-            if (isEmailUser && newPassword) {
-                if (newPassword !== confirmPassword) {
-                    alert("Passwords do not match.");
-                    return;
-                }
-                try {
-                    const credential = EmailAuthProvider.credential(
-                        auth.currentUser.email,
-                        currentPassword
-                    );
-                    await reauthenticateWithCredential(auth.currentUser, credential);
-                    await updatePassword(auth.currentUser, newPassword);
-                } catch (error) {
-                    if (error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
-                        alert("Current password is incorrect.");
-                    } else {
-                        alert("Failed to update password.");
-                        console.error("Error updating password:", error);
-                    }
-                    return;
-                }
-            }
             await updateProfile(auth.currentUser, {
                 displayName: `${firstName} ${lastName}`
             });
@@ -119,6 +97,31 @@ function SettingsView() {
     const isEmailUser = auth.currentUser.providerData.some(
         (provider) => provider.providerId === "password"
     );
+
+    const handleSavePassword = async (e) => {
+        e.preventDefault();
+        if (newPassword !== confirmPassword) {
+            alert("Passwords do not match.");
+            return;
+        }
+        try {
+            const credential = EmailAuthProvider.credential(
+                auth.currentUser.email,
+                currentPassword
+            );
+            await reauthenticateWithCredential(auth.currentUser, credential);
+            await updatePassword(auth.currentUser, newPassword);
+            alert("Password updated successfully");
+            setShowPasswordFields(false);
+        } catch (error) {
+            if (error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
+                alert("Current password is incorrect.");
+            } else {
+                alert("Failed to update password.");
+                console.error("Error updating password:", error);
+            }
+        }
+    }   
 
     return (
         <div className="mt-0 flex justify-center items-center h-screen bg-gradient-to-b from-black to-blue-600">
@@ -148,7 +151,13 @@ function SettingsView() {
                         <div className="relative mb-4">
                             <button
                                 type="button"
-                                onClick={() => setShowPasswordFields((prev) => !prev)}
+                                onClick={(e) => {
+                                    if (showPasswordFields) {
+                                        handleSavePassword(e);
+                                    } else {
+                                        setShowPasswordFields((prev) => !prev);
+                                    }
+                                }}
                                 className="mb-2 w-full text-left bg-gray-700 text-white px-4 py-2 rounded-md cursor-pointer"
                             >
                                 {showPasswordFields ? "Save ▲" : "Change Password ▼"}
